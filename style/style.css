@@ -1,0 +1,77 @@
+:root {
+  --font-base: 'Josefin Sans', sans-serif;
+  --font-title: Arial, Helvetica, sans-serif;
+  --color-bg-dark: rgb(38, 38, 38);
+  --color-bg-light: rgb(213, 229, 255);
+  --color-pg-dark: rgba(73, 73, 73, 0.6);
+  --color-dark: rgb(73, 73, 73);
+  --color-pg-light: rgba(255, 255, 255, 0.6);
+  --color-light: #fff;
+  --color-lightgrey: rgb(182, 180, 190);
+  --color-bg-accent-dark: #2d2d2d;
+  --color-bg-accent-light: #cacaca;
+  --color-accent: #f64435;
+  --color-shadow: 1px 1px 4px 2px rgba(150, 150, 150, 0.4);
+}
+
+* {
+  outline: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-bg-dark) url('../assets/images/background_dark.png')
+    no-repeat 0% 0% / 100vw 30vh;
+  font-family: var(--font-base);
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  font-size: 1.25rem;
+  margin: 0;
+  padding-top: 4rem;
+  font-size: 1.5rem;
+}
+
+body.light {
+  background: var(--color-bg-light) url('../assets/images/background_light.png')
+    no-repeat 0% 0% / 100vw 30vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  width: 100%;
+  background: var(--bg-main-color);
+  border-bottom: 1px solid var(--bg-accent-color);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.themeButton {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  position: absolute;
+  right: 15%;
+  top: 25%;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+}
+.footer p {
+  color: var(--color-lightgrey);
+  font-weight: 700;
+}
