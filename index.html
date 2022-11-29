@@ -23,20 +23,29 @@
     <script type="module" src="./dist/app.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1 class="header__title">Time Schedule</h1>
-      <button class="themeButton">
-        <img
-          class="themeButton-icon"
-          src="./assets/images/icon-moon.svg"
-          alt="change theme icon"
-        />
-      </button>
-    </header>
-    <main class="document">
-      <section class="table"></section>
-      <section class="list"></section>
+    <main class="app">
+      <header class="header">
+        <h1 class="header__title">my Routine & Todo</h1>
+        <button class="themeButton">
+          <img
+            class="themeButton-icon"
+            src="./assets/images/icon-moon.svg"
+            alt="change theme icon"
+          />
+        </button>
+      </header>
+      <main class="document">
+        <div class="days__container"></div>
+        <div class="contents__container">
+          <section class="contents"></section>
+          <div class="add__cotainer">
+            <button class="addBtn"></button>
+          </div>
+        </div>
+      </main>
+      <footer class="footer">
+        <p>Make the most of your time!</p>
+      </footer>
     </main>
-    <footer>Make the most of your time!</footer>
   </body>
 </html>
