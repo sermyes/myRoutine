@@ -1,3 +1,12 @@
+export const Days = [
+    'Sun',
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat'
+];
 export class BaseComponent {
     constructor(htmlStr) {
         const template = document.createElement('template');
