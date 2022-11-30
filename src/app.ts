@@ -1,4 +1,4 @@
-import { Component } from './component/component.js';
+import { Component, DayType } from './component/component.js';
 import { DaysComponent, Days } from './component/days/days.js';
 import { PageComponent } from './component/page/page.js';
 
@@ -16,13 +16,24 @@ class App {
     )! as HTMLElement;
     this.days.attatchTo(this.daysContainer);
 
-    this.page = new PageComponent();
+    this.page = new PageComponent(this.days.getActivedDay()! as DayType);
     this.pageContainer = this.appRoot.querySelector(
       '.contents__container'
     )! as HTMLElement;
     this.page.attatchTo(this.pageContainer);
 
-    console.log(this.days.getActivedDay());
+    this.bindDaysToPage(this.page);
+  }
+
+  private bindDaysToPage(page: PageComponent) {
+    const days = document.querySelectorAll('.day');
+    days.forEach((day) => {
+      day.addEventListener('click', () => {
+        page.setOnActiveChangeListener(
+          day.children[0]?.textContent! as DayType
+        );
+      });
+    });
   }
 }
 

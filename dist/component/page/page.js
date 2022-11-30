@@ -1,6 +1,6 @@
-import { BaseComponent } from './../component.js';
+import { BaseComponent, Days } from './../component.js';
 class PageItemComponent extends BaseComponent {
-    constructor() {
+    constructor(day) {
         super(`
       <div class="content" data-day>
         <div class="content__header">
@@ -26,15 +26,41 @@ class PageItemComponent extends BaseComponent {
         </div>
       </div>
     `);
+        this.day = day;
+        this.element.dataset.day = this.day;
+        this.element.innerText = this.day;
+    }
+    onActive(activedDay) {
+        this.element.classList.remove('active');
+        if (this.element.dataset.day === activedDay) {
+            this.element.classList.add('active');
+        }
     }
 }
 export class PageComponent extends BaseComponent {
-    constructor() {
+    constructor(activedDay) {
         super(`
       <section class="contents">
       </section>
     `);
-        this.page = new PageItemComponent();
-        this.page.attatchTo(this.element);
+        this.activedDay = activedDay;
+        this.children = [];
+        this.addPages(this.element);
+    }
+    addPages(parent) {
+        for (let i = 0; i < Days.length; i++) {
+            const page = new PageItemComponent(Days[i]);
+            page.attatchTo(parent);
+            this.children.push(page);
+        }
+        this.onActive(this.activedDay);
+    }
+    onActive(activedDay) {
+        this.children.forEach((page) => {
+            page.onActive(activedDay);
+        });
+    }
+    setOnActiveChangeListener(listener) {
+        this.onActive(listener);
     }
 }

@@ -1,7 +1,9 @@
-import { BaseComponent } from './../component.js';
+import { BaseComponent, DayType, Days } from './../component.js';
+
+type ChangeListener = DayType;
 
 class PageItemComponent extends BaseComponent<HTMLElement> {
-  constructor() {
+  constructor(private day: DayType) {
     super(`
       <div class="content" data-day>
         <div class="content__header">
@@ -27,17 +29,47 @@ class PageItemComponent extends BaseComponent<HTMLElement> {
         </div>
       </div>
     `);
+
+    this.element.dataset.day = this.day;
+    this.element.innerText = this.day;
+  }
+
+  onActive(activedDay: DayType): void {
+    this.element.classList.remove('active');
+    if (this.element.dataset.day === activedDay) {
+      this.element.classList.add('active');
+    }
   }
 }
 
 export class PageComponent extends BaseComponent<HTMLElement> {
-  private page: PageItemComponent;
-  constructor() {
+  private children: PageItemComponent[] = [];
+  constructor(private activedDay: DayType) {
     super(`
       <section class="contents">
       </section>
     `);
-    this.page = new PageItemComponent();
-    this.page.attatchTo(this.element);
+
+    this.addPages(this.element);
+  }
+
+  private addPages(parent: HTMLElement): void {
+    for (let i = 0; i < Days.length; i++) {
+      const page = new PageItemComponent(Days[i]! as DayType);
+      page.attatchTo(parent);
+      this.children.push(page);
+    }
+
+    this.onActive(this.activedDay);
+  }
+
+  onActive(activedDay: DayType): void {
+    this.children.forEach((page) => {
+      page.onActive(activedDay);
+    });
+  }
+
+  setOnActiveChangeListener(listener: ChangeListener) {
+    this.onActive(listener);
   }
 }

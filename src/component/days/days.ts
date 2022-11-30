@@ -86,6 +86,7 @@ export class DaysComponent extends BaseComponent<HTMLElement> implements Days {
 
         item.onActive('active');
       });
+
       item.attatchTo(parent, 'beforeend');
     }
   };
