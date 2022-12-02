@@ -26,13 +26,10 @@ class App {
   }
 
   private bindDaysToPage(page: PageComponent) {
-    const days = document.querySelectorAll('.day');
-    days.forEach((day) => {
-      day.addEventListener('click', () => {
-        page.setOnActiveChangeListener(
-          day.children[0]?.textContent! as DayType
-        );
-      });
+    const days = document.querySelector('.days')! as HTMLUListElement;
+    days.addEventListener('click', (e) => {
+      const target = e.target! as HTMLLIElement;
+      page.setOnActiveChangeListener(target.dataset.day! as DayType);
     });
   }
 }

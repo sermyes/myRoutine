@@ -13,12 +13,10 @@ class App {
         this.bindDaysToPage(this.page);
     }
     bindDaysToPage(page) {
-        const days = document.querySelectorAll('.day');
-        days.forEach((day) => {
-            day.addEventListener('click', () => {
-                var _a;
-                page.setOnActiveChangeListener((_a = day.children[0]) === null || _a === void 0 ? void 0 : _a.textContent);
-            });
+        const days = document.querySelector('.days');
+        days.addEventListener('click', (e) => {
+            const target = e.target;
+            page.setOnActiveChangeListener(target.dataset.day);
         });
     }
 }

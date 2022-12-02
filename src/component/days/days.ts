@@ -25,6 +25,7 @@ class DaysItemComponent
 		</li>
 		`);
 
+    this.element.dataset.day = text;
     const textElement = this.element.querySelector(
       '.day__text'
     )! as HTMLSpanElement;

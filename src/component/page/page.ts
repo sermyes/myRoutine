@@ -1,6 +1,28 @@
 import { BaseComponent, DayType, Days } from './../component.js';
+import { Modal } from '../modal/modal.js';
 
 type ChangeListener = DayType;
+
+class AddItemMenuComponent extends BaseComponent<HTMLElement> {
+  constructor() {
+    super(`
+      <ul class="addMenu">
+        <li>
+          <span class="addText">Routine</span>
+          <button class="add">
+            <i class="fas fa-plus addIcon"></i>
+          </button>
+        </li>
+        <li>
+          <span class="addText">Todo</span>
+          <button class="add">
+            <i class="fas fa-check"></i>
+          </button>
+        </li>
+      </ul>
+    `);
+  }
+}
 
 class PageItemComponent extends BaseComponent<HTMLElement> {
   constructor(private day: DayType) {
@@ -23,7 +45,7 @@ class PageItemComponent extends BaseComponent<HTMLElement> {
         </div>
         <ul class="items"></ul>
         <div class="content__footer">
-          <button class="addBtn">
+          <button class="addBtn add">
             <i class="fas fa-plus addIcon"></i>
           </button>
         </div>
@@ -31,7 +53,9 @@ class PageItemComponent extends BaseComponent<HTMLElement> {
     `);
 
     this.element.dataset.day = this.day;
-    this.element.innerText = this.day;
+    const modal = new Modal();
+    const addItemMenu = new AddItemMenuComponent();
+    this.onAddItemMenu(modal, addItemMenu);
   }
 
   onActive(activedDay: DayType): void {
@@ -39,6 +63,26 @@ class PageItemComponent extends BaseComponent<HTMLElement> {
     if (this.element.dataset.day === activedDay) {
       this.element.classList.add('active');
     }
+  }
+
+  private onAddItemMenu(modal: Modal, addItemMenu: AddItemMenuComponent): void {
+    const add = this.element.querySelector('.addBtn')! as HTMLButtonElement;
+    const addBtn = this.element.querySelector('.addIcon')! as HTMLElement;
+    const footer = this.element.querySelector(
+      '.content__footer'
+    )! as HTMLElement;
+
+    add.addEventListener('click', () => {
+      if (addBtn.matches('.rotate')) {
+        addBtn.classList.remove('rotate');
+        modal.removeFrom(this.element);
+        addItemMenu.removeFrom(footer);
+      } else {
+        addBtn.classList.add('rotate');
+        modal.attatchTo(this.element, 'afterbegin');
+        addItemMenu.attatchTo(footer, 'beforeend');
+      }
+    });
   }
 }
 

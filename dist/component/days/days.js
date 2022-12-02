@@ -9,6 +9,7 @@ class DaysItemComponent extends BaseComponent {
 		`);
         this.state = state;
         this.text = text;
+        this.element.dataset.day = text;
         const textElement = this.element.querySelector('.day__text');
         textElement.innerText = this.text;
         if (this.state === 'active') {
