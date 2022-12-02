@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Dongle&display=swap');
 :root {
   --font-base: 'Josefin Sans', sans-serif;
   --font-title: Arial, Helvetica, sans-serif;
+  --font-dongle: 'Dongle', sans-serif;
   --color-bg-dark: rgb(38, 38, 38);
   --color-bg-light: rgb(224, 224, 224);
   --color-pg-dark: rgba(73, 73, 73, 0.6);
@@ -325,9 +327,77 @@ body.dark {
 .items {
   flex: 1;
   list-style: none;
-  padding: 0;
+  padding: 10px 20px;
   margin: 0;
-  background-color: red;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid var(--color-lightgrey);
+  border-radius: 5px;
+  background-color: var(--color-white);
+  margin-bottom: 5px;
+}
+
+.time,
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-family: var(--font-dongle);
+  pointer-events: none;
+}
+
+.time {
+  min-width: 80px;
+  line-height: 30px;
+  flex-basis: 12%;
+}
+
+.title {
+  justify-content: flex-start;
+  flex: 1;
+  padding: 0 0.5em;
+  font-weight: 500;
+}
+
+.state_container {
+  flex-basis: 5%;
+}
+
+.stateBtn {
+  background: transparent;
+  border: 1px solid var(--color-dark);
+  min-width: 18px;
+  width: 100%;
+  height: 100%;
+}
+
+.stateBtn i {
+  font-size: 16px;
+}
+
+.deleteBtn {
+  cursor: auto;
+  min-width: 16px;
+  margin-left: 0.5em;
+  flex-basis: 5%;
+  border: none;
+  background: transparent;
+}
+
+.deleteBtn i {
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.deleteBtn i:hover {
+  opacity: 1;
 }
 
 .content__footer {
@@ -422,8 +492,88 @@ body.dark {
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0);
-  opacity: 0.3;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* dialog */
+.dialog__container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  padding: 0.4em;
+  width: 28em;
+  background: var(--color-light);
+  border: 1px solid var(--color-light);
+  border-radius: 0.5rem;
+  box-shadow: 2px 3px 3px 0px rgb(0, 0, 0, 0.5);
+  -webkit-box-shadow: 2px 3px 3px 0px rgb(0, 0, 0, 0.5);
+}
+
+.form__container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+}
+
+.form__time *,
+.form__title * {
+  display: block;
+}
+
+.form__time {
+  margin-bottom: 0.5em;
+}
+
+#title {
+  width: 100%;
+  font-size: 16px;
+  padding: 0.3em 0.5em;
+}
+
+#time {
+  padding: 0.3em 0.5em;
+}
+
+.close {
+  align-self: flex-end;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 3px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  opacity: 0.7;
+  border: none;
+  background: transparent;
+}
+
+.close:hover,
+.close:focus {
+  opacity: 1;
+}
+
+.dialog__submit {
+  align-self: flex-end;
+  margin: 0.1em 0.2em;
+  text-align: center;
+  user-select: none;
+  padding: 0.6em 2em;
+  font-weight: 600;
+  background-color: var(--color-white);
+  border-color: var(--accent-color);
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+.dialog__submit:hover {
+  opacity: 1;
 }
 
 /* animation */

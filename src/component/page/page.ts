@@ -72,7 +72,20 @@ class PageItemComponent
             </button>
           </div>
         </div>
-        <ul class="items"></ul>
+        <ul class="items">
+          <li class="item">
+            <span class="time">오전 08:00</span>
+            <span class="title">공복에 물마시기</span>
+            <div class="state_container">
+              <button class="stateBtn">
+                <i class="fas fa-check"></i>
+              </button>
+            </div>
+            <button class="deleteBtn">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </li>
+        </ul>
         <div class="content__footer">
           <button class="addBtn add">
             <i class="fas fa-plus addIcon"></i>
