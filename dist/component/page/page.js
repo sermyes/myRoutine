@@ -1,5 +1,22 @@
 import { BaseComponent, Days } from './../component.js';
 import { Modal } from '../modal/modal.js';
+class FilterMenuComponent extends BaseComponent {
+    constructor() {
+        super(`
+      <ul class="filterMenu">
+        <li>
+          <span>All</span>
+        </li>
+        <li>
+          <span>Routine</span>
+        </li>
+        <li>
+          <span>Todo</span>
+        </li>
+      </ul>
+    `);
+    }
+}
 class AddItemMenuComponent extends BaseComponent {
     constructor() {
         super(`
@@ -27,17 +44,19 @@ class PageItemComponent extends BaseComponent {
         <div class="content__header">
           <div class="view_option">
             <div class="overlay"></div>
-            <button class="daily viewBtn active">
+            <button class="dailyBtn viewBtn active">
               <span class="textIcon">Daily</span>
             </button>
-            <button class="weekly viewBtn">
+            <button class="weeklyBtn viewBtn">
               <span class="textIcon">Weekly</span>
             </button>
           </div>
-          <button class="filter_option">
-            <i class="fas fa-filter filterIcon"></i>
-            <span class="filterText">Filter</span>
-          </button>
+          <div class="filter_container">
+            <button class="filter_option">
+              <i class="fas fa-filter filterIcon"></i>
+              <span class="filterText">Filter</span>
+            </button>
+          </div>
         </div>
         <ul class="items"></ul>
         <div class="content__footer">
@@ -51,7 +70,10 @@ class PageItemComponent extends BaseComponent {
         this.element.dataset.day = this.day;
         const modal = new Modal();
         const addItemMenu = new AddItemMenuComponent();
+        const filterMenu = new FilterMenuComponent();
         this.onAddItemMenu(modal, addItemMenu);
+        this.onFilterMenu(modal, filterMenu);
+        this.changeViewOption();
     }
     onActive(activedDay) {
         this.element.classList.remove('active');
@@ -60,19 +82,56 @@ class PageItemComponent extends BaseComponent {
         }
     }
     onAddItemMenu(modal, addItemMenu) {
-        const add = this.element.querySelector('.addBtn');
-        const addBtn = this.element.querySelector('.addIcon');
+        const addBtn = this.element.querySelector('.addBtn');
+        const addIco = this.element.querySelector('.addIcon');
         const footer = this.element.querySelector('.content__footer');
-        add.addEventListener('click', () => {
-            if (addBtn.matches('.rotate')) {
-                addBtn.classList.remove('rotate');
+        addBtn.addEventListener('click', () => {
+            if (addIco.matches('.rotate')) {
+                addIco.classList.remove('rotate');
                 modal.removeFrom(this.element);
                 addItemMenu.removeFrom(footer);
+                addBtn.classList.remove('active');
             }
             else {
-                addBtn.classList.add('rotate');
+                addIco.classList.add('rotate');
                 modal.attatchTo(this.element, 'afterbegin');
                 addItemMenu.attatchTo(footer, 'beforeend');
+                addBtn.classList.add('active');
+            }
+        });
+    }
+    onFilterMenu(modal, filterMenu) {
+        const filterContainer = this.element.querySelector('.filter_container');
+        const filterOption = this.element.querySelector('.filter_option');
+        filterOption.addEventListener('click', () => {
+            if (filterOption.matches('.active')) {
+                modal.removeFrom(this.element);
+                filterOption.classList.remove('active');
+                filterMenu.removeFrom(filterContainer);
+            }
+            else {
+                modal.attatchTo(this.element, 'afterbegin');
+                filterOption.classList.add('active');
+                filterMenu.attatchTo(filterContainer);
+            }
+        });
+    }
+    changeViewOption() {
+        const overlay = this.element.querySelector('.overlay');
+        const optionBtn = this.element.querySelector('.view_option');
+        const weeklyBtn = this.element.querySelector('.weeklyBtn');
+        const dailyBtn = this.element.querySelector('.dailyBtn');
+        optionBtn.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.matches('.weeklyBtn')) {
+                overlay.classList.add('right');
+                weeklyBtn.classList.add('active');
+                dailyBtn.classList.remove('active');
+            }
+            else {
+                overlay.classList.remove('right');
+                weeklyBtn.classList.remove('active');
+                dailyBtn.classList.add('active');
             }
         });
     }

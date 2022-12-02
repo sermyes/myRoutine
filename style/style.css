@@ -209,25 +209,29 @@ body.dark {
   background-color: var(--color-lightgreen);
   border: 1px solid var(--color-darkgreen);
   border-radius: 5px;
-  transition: transform 0.1s ease-in;
+  transition: transform 0.1s;
 }
 
 .overlay.right {
   transform: translateX(100%);
 }
 
-.daily,
-.weekly {
+.viewBtn {
   flex: 1;
   background: transparent;
   padding: 0;
   border: none;
 }
 
+.viewBtn * {
+  pointer-events: none;
+}
+
 .textIcon {
   display: block;
   width: 55px;
   line-height: 28px;
+  font-weight: bold;
   border: 1px solid var(--color-lightgrey);
   background: var(--color-white);
   font-size: 13px;
@@ -239,25 +243,35 @@ body.dark {
   font-weight: bold;
 }
 
-.daily .textIcon {
+.dailyBtn .textIcon {
   border-right: 0;
   border-radius: 5px 0px 0px 5px;
 }
 
-.weekly .textIcon {
+.weeklyBtn .textIcon {
   border-left: 0;
   border-radius: 0px 5px 5px 0px;
 }
 
 /* filter_option */
+.filter_container {
+  position: relative;
+}
+
 .filter_option {
+  position: relative;
   border: none;
   background: transparent;
   cursor: pointer;
+  z-index: 0;
 }
 
 .filter_option.active {
-  opacity: 0.4;
+  z-index: 10;
+}
+
+.filterText {
+  font-weight: bold;
 }
 
 .filterText,
@@ -268,6 +282,38 @@ body.dark {
 
 .filterIcon {
   font-size: 12px;
+}
+
+.filterMenu {
+  z-index: 10;
+  position: absolute;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  height: 90px;
+  margin: 0;
+  padding: 0.6rem;
+  background: var(--color-white);
+  color: var(--color-black);
+  right: 0;
+  bottom: -100px;
+}
+
+.filterMenu li {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 0.6em;
+  cursor: pointer;
+}
+
+.filterMenu li span {
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.filterMenu li span:hover {
+  border-bottom: 2px solid var(--color-lightgrey);
 }
 
 /* items */
@@ -299,11 +345,11 @@ body.dark {
 .addBtn {
   background-color: var(--color-green);
   position: relative;
-  z-index: 10;
+  z-index: 0;
 }
 
 .addBtn.active {
-  opacity: 0.4;
+  z-index: 10;
 }
 
 .addIcon {
