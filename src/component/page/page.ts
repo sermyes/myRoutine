@@ -1,7 +1,13 @@
-import { BaseComponent, DayType, Days } from './../component.js';
+import { BaseComponent, Component, DayType, Days } from './../component.js';
 import { Modal } from '../modal/modal.js';
 
 type ChangeListener = DayType;
+interface Activable extends Component {
+  onActive(activedDay: DayType): void;
+}
+interface PageContainer extends Component, Activable {
+  setOnActiveChangeListener(listener: ChangeListener): void;
+}
 
 class FilterMenuComponent extends BaseComponent<HTMLElement> {
   constructor() {
@@ -42,7 +48,10 @@ class AddItemMenuComponent extends BaseComponent<HTMLElement> {
   }
 }
 
-class PageItemComponent extends BaseComponent<HTMLElement> {
+class PageItemComponent
+  extends BaseComponent<HTMLElement>
+  implements Activable
+{
   constructor(private day: DayType) {
     super(`
       <div class="content" data-day>
@@ -156,7 +165,10 @@ class PageItemComponent extends BaseComponent<HTMLElement> {
   }
 }
 
-export class PageComponent extends BaseComponent<HTMLElement> {
+export class PageComponent
+  extends BaseComponent<HTMLElement>
+  implements PageContainer
+{
   private children: PageItemComponent[] = [];
   constructor(private activedDay: DayType) {
     super(`

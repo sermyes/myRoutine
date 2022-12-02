@@ -270,8 +270,13 @@ body.dark {
   z-index: 10;
 }
 
+.filter_option.active * {
+  color: white;
+}
+
 .filterText {
   font-weight: bold;
+  letter-spacing: 1.05px;
 }
 
 .filterText,
