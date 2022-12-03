@@ -15,9 +15,11 @@ class App {
         this.page.attatchTo(this.pageContainer);
         this.bindDaysToPage(this.page);
         const modal = new Modal();
-        const addBtn = document.querySelector('.addBtn');
+        const addFooter = document.querySelector('.content__footer');
+        const addBtn = addFooter.querySelector('.addBtn');
         addBtn.addEventListener('click', () => {
-            this.bindElementToDialog(modal);
+            const addBtnContainer = addFooter.querySelector('.addMenu');
+            addBtnContainer && this.bindElementToDialog(modal, addBtnContainer);
         });
     }
     bindDaysToPage(page) {
@@ -27,28 +29,30 @@ class App {
             page.setOnActiveChangeListener(target.dataset.day);
         });
     }
-    bindElementToDialog(modal) {
-        const addBtnContainer = document.querySelector('.addMenu');
-        addBtnContainer &&
-            addBtnContainer.addEventListener('click', (e) => {
-                const btnContainer = e.currentTarget;
-                const day = btnContainer.dataset.day;
-                const btn = e.target;
-                let dialog;
-                console.log(day);
-                modal.attatchTo(this.dialogRoot);
-                if (btn.matches('.addRoutine')) {
-                    dialog = new Dialog('Routine');
-                }
-                else {
-                    dialog = new Dialog('Todo');
-                }
-                modal.attatch(dialog);
-                modal.attatchTo(this.dialogRoot);
-                dialog.setOnCloseListener(() => {
-                    modal.removeFrom(this.dialogRoot);
-                });
+    bindElementToDialog(modal, addBtnContainer) {
+        addBtnContainer.addEventListener('click', (e) => {
+            const btnContainer = e.currentTarget;
+            const day = btnContainer.dataset.day;
+            const btn = e.target;
+            let dialog;
+            console.log(day);
+            modal.attatchTo(this.dialogRoot);
+            if (btn.matches('.addRoutine')) {
+                dialog = new Dialog('Routine');
+            }
+            else {
+                dialog = new Dialog('Todo');
+            }
+            modal.attatch(dialog);
+            modal.attatchTo(this.dialogRoot);
+            dialog.setOnCloseListener(() => {
+                modal.removeFrom(this.dialogRoot);
             });
+            dialog.setOnAddListener(() => {
+                console.log(dialog.time, dialog.title);
+                modal.removeFrom(this.dialogRoot);
+            });
+        });
     }
 }
 new App(document.querySelector('.document'), document.body);

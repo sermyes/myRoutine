@@ -9,7 +9,7 @@ export class Dialog extends BaseComponent {
 						<div class="form__container">
 							<div class="form__time">
 								<label for="time">Time</label>
-								<input type="time" id="time" />
+								<input type="time" id="time" required />
 							</div>
 							<div class="form__title">
 								<label for="title"></label>
@@ -25,6 +25,9 @@ export class Dialog extends BaseComponent {
         this.setOnCloseListener = (listener) => {
             this.onCloseListener = listener;
         };
+        this.setOnAddListener = (listener) => {
+            this.onAddListener = listener;
+        };
         const titleElement = this.element.querySelector("label[for='title']");
         if (this.dataType === 'Routine') {
             titleElement.innerText = 'Routine';
@@ -36,5 +39,17 @@ export class Dialog extends BaseComponent {
         closeBtn.addEventListener('click', () => {
             this.onCloseListener && this.onCloseListener();
         });
+        const addBtn = this.element.querySelector('.dialog__submit');
+        addBtn.addEventListener('click', () => {
+            this.onAddListener && this.onAddListener();
+        });
+    }
+    get time() {
+        const time = this.element.querySelector('#time');
+        return time.value;
+    }
+    get title() {
+        const title = this.element.querySelector('#title');
+        return title.value;
     }
 }

@@ -28,9 +28,15 @@ class App {
     this.bindDaysToPage(this.page);
 
     const modal = new Modal();
-    const addBtn = document.querySelector('.addBtn')! as HTMLButtonElement;
+    const addFooter = document.querySelector(
+      '.content__footer'
+    )! as HTMLElement;
+    const addBtn = addFooter.querySelector('.addBtn')! as HTMLButtonElement;
     addBtn.addEventListener('click', () => {
-      this.bindElementToDialog(modal);
+      const addBtnContainer = addFooter.querySelector(
+        '.addMenu'
+      )! as HTMLUListElement;
+      addBtnContainer && this.bindElementToDialog(modal, addBtnContainer);
     });
 
     // data
@@ -44,31 +50,33 @@ class App {
     });
   }
 
-  private bindElementToDialog(modal: Modal) {
-    const addBtnContainer = document.querySelector(
-      '.addMenu'
-    )! as HTMLUListElement;
-    addBtnContainer &&
-      addBtnContainer.addEventListener('click', (e) => {
-        const btnContainer = e.currentTarget! as HTMLUListElement;
-        const day = btnContainer.dataset.day;
-        const btn = e.target! as HTMLLIElement;
-        let dialog: Dialog;
+  private bindElementToDialog(modal: Modal, addBtnContainer: HTMLElement) {
+    addBtnContainer.addEventListener('click', (e) => {
+      const btnContainer = e.currentTarget! as HTMLUListElement;
+      const day = btnContainer.dataset.day;
+      const btn = e.target! as HTMLLIElement;
+      let dialog: Dialog;
 
-        console.log(day);
-        modal.attatchTo(this.dialogRoot);
-        if (btn.matches('.addRoutine')) {
-          dialog = new Dialog('Routine');
-        } else {
-          dialog = new Dialog('Todo');
-        }
+      console.log(day);
+      modal.attatchTo(this.dialogRoot);
+      if (btn.matches('.addRoutine')) {
+        dialog = new Dialog('Routine');
+      } else {
+        dialog = new Dialog('Todo');
+      }
 
-        modal.attatch(dialog);
-        modal.attatchTo(this.dialogRoot);
-        dialog.setOnCloseListener(() => {
-          modal.removeFrom(this.dialogRoot);
-        });
+      modal.attatch(dialog);
+      modal.attatchTo(this.dialogRoot);
+
+      dialog.setOnCloseListener(() => {
+        modal.removeFrom(this.dialogRoot);
       });
+
+      dialog.setOnAddListener(() => {
+        console.log(dialog.time, dialog.title);
+        modal.removeFrom(this.dialogRoot);
+      });
+    });
   }
 }
 
