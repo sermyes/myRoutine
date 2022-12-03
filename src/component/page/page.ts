@@ -2,6 +2,8 @@ import { BaseComponent, Component, DayType, Days } from './../component.js';
 import { Modal } from '../modal/modal.js';
 
 type ChangeListener = DayType;
+type AddItemsClickListener = () => void;
+type RemoveItemMenuListener = () => void;
 interface Activable extends Component {
   onActive(activedDay: DayType): void;
 }
@@ -28,16 +30,17 @@ class FilterMenuComponent extends BaseComponent<HTMLElement> {
 }
 
 class AddItemMenuComponent extends BaseComponent<HTMLElement> {
-  constructor() {
+  private removeItemMenuListener?: RemoveItemMenuListener;
+  constructor(private day: DayType) {
     super(`
       <ul class="addMenu">
-        <li>
+        <li class="addRoutine">
           <span class="addText">Routine</span>
           <button class="add">
             <i class="fas fa-plus addIcon"></i>
           </button>
         </li>
-        <li>
+        <li class="addTodo">
           <span class="addText">Todo</span>
           <button class="add">
             <i class="fas fa-check"></i>
@@ -45,6 +48,15 @@ class AddItemMenuComponent extends BaseComponent<HTMLElement> {
         </li>
       </ul>
     `);
+
+    this.element.dataset.day = this.day;
+    this.element.addEventListener('click', () => {
+      this.removeItemMenuListener && this.removeItemMenuListener();
+    });
+  }
+
+  setRemoveItemMenuListener(listener: RemoveItemMenuListener) {
+    this.removeItemMenuListener = listener;
   }
 }
 
@@ -96,7 +108,7 @@ class PageItemComponent
 
     this.element.dataset.day = this.day;
     const modal = new Modal();
-    const addItemMenu = new AddItemMenuComponent();
+    const addItemMenu = new AddItemMenuComponent(this.day);
     const filterMenu = new FilterMenuComponent();
     this.onAddItemMenu(modal, addItemMenu);
     this.onFilterMenu(modal, filterMenu);
@@ -119,17 +131,40 @@ class PageItemComponent
 
     addBtn.addEventListener('click', () => {
       if (addIco.matches('.rotate')) {
-        addIco.classList.remove('rotate');
-        modal.removeFrom(this.element);
-        addItemMenu.removeFrom(footer);
-        addBtn.classList.remove('active');
+        this.removeItemMenu(addIco, modal, addItemMenu, footer, addBtn);
       } else {
-        addIco.classList.add('rotate');
-        modal.attatchTo(this.element, 'afterbegin');
-        addItemMenu.attatchTo(footer, 'beforeend');
-        addBtn.classList.add('active');
+        this.addItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+        addItemMenu.setRemoveItemMenuListener(() => {
+          this.removeItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+        });
       }
     });
+  }
+
+  private removeItemMenu(
+    addIco: HTMLElement,
+    modal: Modal,
+    addItemMenu: AddItemMenuComponent,
+    footer: HTMLElement,
+    addBtn: HTMLButtonElement
+  ) {
+    addIco.classList.remove('rotate');
+    modal.removeFrom(this.element);
+    addItemMenu.removeFrom(footer);
+    addBtn.classList.remove('active');
+  }
+
+  private addItemMenu(
+    addIco: HTMLElement,
+    modal: Modal,
+    addItemMenu: AddItemMenuComponent,
+    footer: HTMLElement,
+    addBtn: HTMLButtonElement
+  ) {
+    addIco.classList.add('rotate');
+    modal.attatchTo(this.element, 'afterbegin');
+    addItemMenu.attatchTo(footer, 'beforeend');
+    addBtn.classList.add('active');
   }
 
   private onFilterMenu(modal: Modal, filterMenu: FilterMenuComponent) {
@@ -210,5 +245,9 @@ export class PageComponent
 
   setOnActiveChangeListener(listener: ChangeListener) {
     this.onActive(listener);
+  }
+
+  setAddItemsClickListener(listener: AddItemsClickListener) {
+    console.log(listener);
   }
 }

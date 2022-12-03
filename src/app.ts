@@ -1,6 +1,9 @@
 import { Component, DayType } from './component/component.js';
 import { DaysComponent, Days } from './component/days/days.js';
 import { PageComponent } from './component/page/page.js';
+import { Dialog } from './dialog/dialog.js';
+import { Modal } from './component/modal/modal.js';
+// import { Presenter } from './presenter.js';
 
 class App {
   private days: Days & Component;
@@ -8,7 +11,7 @@ class App {
   private daysContainer: HTMLElement;
   private pageContainer: HTMLElement;
   private today: number;
-  constructor(private appRoot: HTMLElement) {
+  constructor(private appRoot: HTMLElement, private dialogRoot: HTMLElement) {
     this.today = new Date().getDay();
     this.days = new DaysComponent(this.today);
     this.daysContainer = this.appRoot.querySelector(
@@ -23,6 +26,14 @@ class App {
     this.page.attatchTo(this.pageContainer);
 
     this.bindDaysToPage(this.page);
+
+    const modal = new Modal();
+    const addBtn = document.querySelector('.addBtn')! as HTMLButtonElement;
+    addBtn.addEventListener('click', () => {
+      this.bindElementToDialog(modal);
+    });
+
+    // data
   }
 
   private bindDaysToPage(page: PageComponent) {
@@ -32,6 +43,31 @@ class App {
       page.setOnActiveChangeListener(target.dataset.day! as DayType);
     });
   }
+
+  private bindElementToDialog(modal: Modal) {
+    const addBtnContainer = document.querySelector(
+      '.addMenu'
+    )! as HTMLUListElement;
+    addBtnContainer &&
+      addBtnContainer.addEventListener('click', (e) => {
+        const btnContainer = e.currentTarget! as HTMLUListElement;
+        const day = btnContainer.dataset.day;
+        const btn = e.target! as HTMLLIElement;
+        let dialog: Dialog;
+
+        console.log(day);
+        modal.attatchTo(this.dialogRoot);
+        if (btn.matches('.addRoutine')) {
+          dialog = new Dialog('Routine');
+          modal.attatch(dialog);
+        } else if (btn.matches('.addTodo')) {
+          dialog = new Dialog('Todo');
+          modal.attatch(dialog);
+        }
+
+        modal.attatchTo(this.dialogRoot);
+      });
+  }
 }
 
-new App(document.querySelector('.document')! as HTMLElement);
+new App(document.querySelector('.document')! as HTMLElement, document.body);
