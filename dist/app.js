@@ -39,13 +39,15 @@ class App {
                 modal.attatchTo(this.dialogRoot);
                 if (btn.matches('.addRoutine')) {
                     dialog = new Dialog('Routine');
-                    modal.attatch(dialog);
                 }
-                else if (btn.matches('.addTodo')) {
+                else {
                     dialog = new Dialog('Todo');
-                    modal.attatch(dialog);
                 }
+                modal.attatch(dialog);
                 modal.attatchTo(this.dialogRoot);
+                dialog.setOnCloseListener(() => {
+                    modal.removeFrom(this.dialogRoot);
+                });
             });
     }
 }
