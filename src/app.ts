@@ -2,8 +2,6 @@ import { Component, DayType } from './component/component.js';
 import { DaysComponent, Days } from './component/days/days.js';
 import { PageComponent } from './component/page/page.js';
 import { Dialog } from './dialog/dialog.js';
-import { Modal } from './component/modal/modal.js';
-// import { Presenter } from './presenter.js';
 
 class App {
   private days: Days & Component;
@@ -11,7 +9,7 @@ class App {
   private daysContainer: HTMLElement;
   private pageContainer: HTMLElement;
   private today: number;
-  constructor(private appRoot: HTMLElement, private dialogRoot: HTMLElement) {
+  constructor(private appRoot: HTMLElement) {
     this.today = new Date().getDay();
     this.days = new DaysComponent(this.today);
     this.daysContainer = this.appRoot.querySelector(
@@ -27,18 +25,19 @@ class App {
 
     this.bindDaysToPage(this.page);
 
-    const modal = new Modal();
-    const addFooter = document.querySelector(
-      '.content__footer'
-    )! as HTMLElement;
-    const addBtn = addFooter.querySelector('.addBtn')! as HTMLButtonElement;
-    addBtn.addEventListener('click', () => {
-      const addBtnContainer = addFooter.querySelector(
-        '.addMenu'
-      )! as HTMLUListElement;
-      addBtnContainer && this.bindElementToDialog(modal, addBtnContainer);
+    const addBtns = document.querySelectorAll('.addBtn');
+    addBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        if (e.target === btn) {
+          const parent = btn.parentElement! as HTMLElement;
+          const ico = btn.querySelector('.addIcon')! as HTMLElement;
+          const addMenu = parent.querySelector('.addMenu')! as HTMLElement;
+          if (ico.matches('.rotate')) {
+            addMenu.addEventListener('click', this.bindElementToDialog);
+          }
+        }
+      });
     });
-
     // data
   }
 
@@ -50,34 +49,32 @@ class App {
     });
   }
 
-  private bindElementToDialog(modal: Modal, addBtnContainer: HTMLElement) {
-    addBtnContainer.addEventListener('click', (e) => {
-      const btnContainer = e.currentTarget! as HTMLUListElement;
-      const day = btnContainer.dataset.day;
-      const btn = e.target! as HTMLLIElement;
-      let dialog: Dialog;
+  private bindElementToDialog(e: Event) {
+    const btnContainer = e.currentTarget! as HTMLUListElement;
+    const day = btnContainer.dataset.day;
+    const btn = e.target! as HTMLLIElement;
+    let dialog: Dialog;
 
-      console.log(day);
-      modal.attatchTo(this.dialogRoot);
-      if (btn.matches('.addRoutine')) {
-        dialog = new Dialog('Routine');
-      } else {
-        dialog = new Dialog('Todo');
-      }
-
-      modal.attatch(dialog);
-      modal.attatchTo(this.dialogRoot);
-
-      dialog.setOnCloseListener(() => {
-        modal.removeFrom(this.dialogRoot);
-      });
-
-      dialog.setOnAddListener(() => {
-        console.log(dialog.time, dialog.title);
-        modal.removeFrom(this.dialogRoot);
-      });
+    console.log(day);
+    if (btn.matches('.addRoutine')) {
+      dialog = new Dialog('Routine');
+    } else {
+      dialog = new Dialog('Todo');
+    }
+    dialog.attatchTo(document.body);
+    dialog.setOnCloseListener(() => {
+      dialog.removeFrom(document.body);
     });
+
+    dialog.setOnAddListener(() => {
+      dialog.removeFrom(document.body);
+      this.addItem(dialog.type, dialog.time, dialog.title);
+    });
+  }
+
+  private addItem(type: string, time: string, title: string) {
+    console.log(type, time, title);
   }
 }
 
-new App(document.querySelector('.document')! as HTMLElement, document.body);
+new App(document.querySelector('.document')! as HTMLElement);

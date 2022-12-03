@@ -75,7 +75,7 @@ export class DaysComponent extends BaseComponent<HTMLElement> implements Days {
   private addDays = (parent: HTMLElement) => {
     for (let i = 1; i <= Days.length; i++) {
       const item = new DaysItemComponent(
-        this.today % Days.length === i ? 'active' : 'inactive',
+        this.today === i % Days.length ? 'active' : 'inactive',
         Days[i % Days.length]! as DayType
       );
       this.children.push(item);

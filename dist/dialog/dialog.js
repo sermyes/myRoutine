@@ -2,10 +2,10 @@ import { BaseComponent } from '../component/component.js';
 export class Dialog extends BaseComponent {
     constructor(dataType) {
         super(`
-			<dialog class="dialog__container">
-				<div class="dialog">
-					<button class="close">&times;</button>
-					<div id="dialog__body">
+			<section class="modal">
+				<dialog class="dialog__container">
+					<form class="dialog">
+						<button type="button" class="close">&times;</button>
 						<div class="form__container">
 							<div class="form__time">
 								<label for="time">Time</label>
@@ -13,13 +13,13 @@ export class Dialog extends BaseComponent {
 							</div>
 							<div class="form__title">
 								<label for="title"></label>
-								<input type="text" id="title" />
+								<input type="text" id="title" minlength="1" required />
 							</div>
 						</div>
-					</div>
-					<button class="dialog__submit">ADD</button>
-				</div>
-			</dialog>
+						<button type="submit" class="dialog__submit">ADD</button>
+					</form>
+				</dialog>
+			</section">
 		`);
         this.dataType = dataType;
         this.setOnCloseListener = (listener) => {
@@ -51,5 +51,8 @@ export class Dialog extends BaseComponent {
     get title() {
         const title = this.element.querySelector('#title');
         return title.value;
+    }
+    get type() {
+        return this.dataType;
     }
 }

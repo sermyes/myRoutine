@@ -48,7 +48,7 @@ export class DaysComponent extends BaseComponent {
         this.children = [];
         this.addDays = (parent) => {
             for (let i = 1; i <= Days.length; i++) {
-                const item = new DaysItemComponent(this.today % Days.length === i ? 'active' : 'inactive', Days[i % Days.length]);
+                const item = new DaysItemComponent(this.today === i % Days.length ? 'active' : 'inactive', Days[i % Days.length]);
                 this.children.push(item);
                 item.setOnListener(() => {
                     this.children.forEach((component) => {

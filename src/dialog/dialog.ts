@@ -1,11 +1,12 @@
 import { BaseComponent } from '../component/component.js';
-import { Component } from './../component/component';
+import { Component } from './../component/component.js';
 
 type OnCloseListener = () => void;
 type OnAddListener = () => void;
 interface DialogInputData extends Component {
   get title(): string;
   get time(): string;
+  get type(): string;
 }
 
 export class Dialog
@@ -16,10 +17,10 @@ export class Dialog
   private onAddListener?: OnAddListener;
   constructor(private dataType: 'Routine' | 'Todo') {
     super(`
-			<dialog class="dialog__container">
-				<div class="dialog">
-					<button class="close">&times;</button>
-					<div id="dialog__body">
+			<section class="modal">
+				<dialog class="dialog__container">
+					<form class="dialog">
+						<button type="button" class="close">&times;</button>
 						<div class="form__container">
 							<div class="form__time">
 								<label for="time">Time</label>
@@ -27,13 +28,13 @@ export class Dialog
 							</div>
 							<div class="form__title">
 								<label for="title"></label>
-								<input type="text" id="title" />
+								<input type="text" id="title" minlength="1" required />
 							</div>
 						</div>
-					</div>
-					<button class="dialog__submit">ADD</button>
-				</div>
-			</dialog>
+						<button type="submit" class="dialog__submit">ADD</button>
+					</form>
+				</dialog>
+			</section">
 		`);
 
     const titleElement = this.element.querySelector(
@@ -74,5 +75,9 @@ export class Dialog
   get title(): string {
     const title = this.element.querySelector('#title')! as HTMLInputElement;
     return title.value;
+  }
+
+  get type(): string {
+    return this.dataType;
   }
 }
