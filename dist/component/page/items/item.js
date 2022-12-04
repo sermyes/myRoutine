@@ -1,8 +1,7 @@
 import { BaseComponent } from '../../component.js';
-
-export class ItemComponent extends BaseComponent<HTMLElement> {
-  constructor() {
-    super(`
+export class ItemComponent extends BaseComponent {
+    constructor() {
+        super(`
 			<li class="item">
 				<span class="time"></span>
 				<span class="title"></span>
@@ -16,5 +15,8 @@ export class ItemComponent extends BaseComponent<HTMLElement> {
 				</button>
 			</li>
 		`);
-  }
+    }
+}
+export class ItemConatainerComponent {
+    constructor() { }
 }

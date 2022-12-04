@@ -17,3 +17,6 @@ export class ItemComponent extends BaseComponent {
 		`);
     }
 }
+export class ItemConatainerComponent {
+    constructor() { }
+}
