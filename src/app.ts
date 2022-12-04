@@ -2,6 +2,7 @@ import { Component, DayType } from './component/component.js';
 import { DaysComponent, Days } from './component/days/days.js';
 import { PageComponent } from './component/page/page.js';
 import { Dialog } from './dialog/dialog.js';
+import { Items, Presenter } from './presenter.js';
 
 class App {
   private days: Days & Component;
@@ -10,7 +11,11 @@ class App {
   private pageContainer: HTMLElement;
   private today: number;
   private activedPage: HTMLElement;
+  private presenter: Presenter;
+  private items: Items;
   constructor(private appRoot: HTMLElement) {
+    this.presenter = new Presenter();
+    this.items = this.presenter.getItems();
     this.today = new Date().getDay();
     this.days = new DaysComponent(this.today);
     this.daysContainer = this.appRoot.querySelector(
@@ -48,6 +53,7 @@ class App {
       const addMenu = this.activedPage.querySelector(
         '.addMenu'
       )! as HTMLElement;
+      const day = addMenu.dataset.day;
       addMenu.addEventListener('click', (e) => {
         const target = e.target! as HTMLElement;
         if (target.matches('.addRoutine')) {
@@ -63,19 +69,22 @@ class App {
 
         dialog.setOnAddListener(() => {
           dialog.removeFrom(document.body);
+          this.addItem(dialog.type, dialog.time, dialog.title, day! as DayType);
         });
       });
     });
   };
 
-  // private addItem = (
-  //   type: string,
-  //   time: string,
-  //   title: string,
-  //   day: string
-  // ) => {
-  //   console.log(type, time, title, day);
-  // };
+  private addItem = (
+    type: string,
+    time: string,
+    title: string,
+    day: DayType
+  ) => {
+    const newItems = this.presenter.addItem(type, time, title, day);
+    this.items = newItems;
+    console.log(this.items);
+  };
 }
 
 new App(document.querySelector('.document')! as HTMLElement);

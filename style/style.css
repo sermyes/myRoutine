@@ -559,6 +559,25 @@ body.dark {
   opacity: 1;
 }
 
+.dialog__footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.dialog__error {
+  pointer-events: none;
+  padding: 0.2em 0.2em 0;
+  display: inline-block;
+  background: var(--color-accent);
+  color: var(--color-white);
+  visibility: hidden;
+}
+
+.dialog__error.active {
+  visibility: visible;
+}
+
 .dialog__submit {
   align-self: flex-end;
   margin: 0.1em 0.2em;

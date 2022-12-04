@@ -16,7 +16,10 @@ export class Dialog extends BaseComponent {
 								<input type="text" id="title" minlength="1" required />
 							</div>
 						</div>
-						<button type="submit" class="dialog__submit">ADD</button>
+						<div class="dialog__footer">
+              <span class="dialog__error">Please enter at least one charator</span>
+              <button type="submit" class="dialog__submit">ADD</button>
+            </div>
 					</form>
 				</dialog>
 			</section">
@@ -39,14 +42,29 @@ export class Dialog extends BaseComponent {
         };
         this.dataType = 'Routine';
         this.setType(this.dataType);
+        const error = this.element.querySelector('.dialog__error');
         const closeBtn = this.element.querySelector('.close');
         closeBtn.addEventListener('click', () => {
             this.onCloseListener && this.onCloseListener();
+            this.removeActive(error);
         });
         const addBtn = this.element.querySelector('.dialog__submit');
-        addBtn.addEventListener('click', () => {
+        const time = this.element.querySelector('#time');
+        const title = this.element.querySelector('#title');
+        addBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (title.value === '' || time.value === '') {
+                this.addActive(error);
+                return;
+            }
             this.onAddListener && this.onAddListener();
         });
+    }
+    addActive(error) {
+        error.classList.add('active');
+    }
+    removeActive(error) {
+        error.classList.remove('active');
     }
     get time() {
         const time = this.element.querySelector('#time');

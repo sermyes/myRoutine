@@ -2,12 +2,11 @@ import { DayType } from './component/component.js';
 
 export type DataType = 'Routine' | 'Todo';
 type MetaData = {
-  type: DataType;
   time: string;
   title: string;
 };
 type TodoMetaData = MetaData & { state: 'completion' | null };
-type RoutineMetaData = MetaData & { rest: DayType[] };
+type RoutineMetaData = TodoMetaData & { rest: DayType[] };
 type TodoData = {
   [K in DayType]: {
     [key in number]: TodoMetaData;
@@ -30,7 +29,18 @@ export class Presenter {
     };
   }
 
-  addItem() {}
+  addItem(type: string, time: string, title: string, day: DayType): Items {
+    const id = Date.now();
+    let item = { id, time, title, state: null };
+    if (type === 'Routine') {
+      const routineItem: RoutineMetaData = { ...item, rest: [] };
+      this.items[type][id] = routineItem;
+    } else {
+      this.items[type! as 'Todo'][day][id] = item;
+    }
+
+    return this.items;
+  }
 
   removeItem() {}
 
