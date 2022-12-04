@@ -1,6 +1,7 @@
 import { BaseComponent } from '../component/component.js';
 import { Component } from './../component/component.js';
 
+type DataType = 'Routine' | 'Todo';
 type OnCloseListener = () => void;
 type OnAddListener = () => void;
 interface DialogInputData extends Component {
@@ -13,9 +14,10 @@ export class Dialog
   extends BaseComponent<HTMLElement>
   implements DialogInputData
 {
+  private dataType: DataType;
   private onCloseListener?: OnCloseListener;
   private onAddListener?: OnAddListener;
-  constructor(private dataType: 'Routine' | 'Todo') {
+  constructor() {
     super(`
 			<section class="modal">
 				<dialog class="dialog__container">
@@ -37,14 +39,8 @@ export class Dialog
 			</section">
 		`);
 
-    const titleElement = this.element.querySelector(
-      "label[for='title']"
-    )! as HTMLLabelElement;
-    if (this.dataType === 'Routine') {
-      titleElement.innerText = 'Routine';
-    } else {
-      titleElement.innerText = 'Todo';
-    }
+    this.dataType = 'Routine';
+    this.setType(this.dataType);
 
     const closeBtn = this.element.querySelector('.close')! as HTMLButtonElement;
     closeBtn.addEventListener('click', () => {
@@ -54,10 +50,23 @@ export class Dialog
     const addBtn = this.element.querySelector(
       '.dialog__submit'
     )! as HTMLButtonElement;
+
     addBtn.addEventListener('click', () => {
       this.onAddListener && this.onAddListener();
     });
   }
+
+  setType = (dataType: 'Routine' | 'Todo') => {
+    const titleElement = this.element.querySelector(
+      "label[for='title']"
+    )! as HTMLLabelElement;
+    if (dataType === 'Routine') {
+      titleElement.innerText = 'Routine';
+    } else {
+      titleElement.innerText = 'Todo';
+    }
+    this.dataType = dataType;
+  };
 
   setOnCloseListener = (listener: OnCloseListener) => {
     this.onCloseListener = listener;
@@ -77,7 +86,7 @@ export class Dialog
     return title.value;
   }
 
-  get type(): string {
+  get type(): DataType {
     return this.dataType;
   }
 }

@@ -102,6 +102,14 @@ class PageItemComponent extends BaseComponent {
             this.element.classList.add('active');
         }
     }
+    getActived() {
+        if (this.element.matches('.active')) {
+            return this.element;
+        }
+        else {
+            return null;
+        }
+    }
     onAddItemMenu(modal, addItemMenu) {
         const addBtn = this.element.querySelector('.addBtn');
         const addIco = this.element.querySelector('.addIcon');
@@ -192,7 +200,14 @@ export class PageComponent extends BaseComponent {
     setOnActiveChangeListener(listener) {
         this.onActive(listener);
     }
-    setAddItemsClickListener(listener) {
-        console.log(listener);
+    getActivedPage() {
+        let activedPage;
+        this.children.forEach((page) => {
+            const element = page.getActived();
+            if (element) {
+                activedPage = element;
+            }
+        });
+        return activedPage;
     }
 }

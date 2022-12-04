@@ -1,6 +1,6 @@
 import { BaseComponent } from '../component/component.js';
 export class Dialog extends BaseComponent {
-    constructor(dataType) {
+    constructor() {
         super(`
 			<section class="modal">
 				<dialog class="dialog__container">
@@ -21,20 +21,24 @@ export class Dialog extends BaseComponent {
 				</dialog>
 			</section">
 		`);
-        this.dataType = dataType;
+        this.setType = (dataType) => {
+            const titleElement = this.element.querySelector("label[for='title']");
+            if (dataType === 'Routine') {
+                titleElement.innerText = 'Routine';
+            }
+            else {
+                titleElement.innerText = 'Todo';
+            }
+            this.dataType = dataType;
+        };
         this.setOnCloseListener = (listener) => {
             this.onCloseListener = listener;
         };
         this.setOnAddListener = (listener) => {
             this.onAddListener = listener;
         };
-        const titleElement = this.element.querySelector("label[for='title']");
-        if (this.dataType === 'Routine') {
-            titleElement.innerText = 'Routine';
-        }
-        else {
-            titleElement.innerText = 'Todo';
-        }
+        this.dataType = 'Routine';
+        this.setType(this.dataType);
         const closeBtn = this.element.querySelector('.close');
         closeBtn.addEventListener('click', () => {
             this.onCloseListener && this.onCloseListener();

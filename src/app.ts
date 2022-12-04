@@ -9,6 +9,7 @@ class App {
   private daysContainer: HTMLElement;
   private pageContainer: HTMLElement;
   private today: number;
+  private activedPage: HTMLElement;
   constructor(private appRoot: HTMLElement) {
     this.today = new Date().getDay();
     this.days = new DaysComponent(this.today);
@@ -23,22 +24,9 @@ class App {
     )! as HTMLElement;
     this.page.attatchTo(this.pageContainer);
 
+    this.activedPage = this.page.getActivedPage();
     this.bindDaysToPage(this.page);
-
-    const addBtns = document.querySelectorAll('.addBtn');
-    addBtns.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        if (e.target === btn) {
-          const parent = btn.parentElement! as HTMLElement;
-          const ico = btn.querySelector('.addIcon')! as HTMLElement;
-          const addMenu = parent.querySelector('.addMenu')! as HTMLElement;
-          if (ico.matches('.rotate')) {
-            addMenu.addEventListener('click', this.bindElementToDialog);
-          }
-        }
-      });
-    });
-    // data
+    this.bindElementToDialog();
   }
 
   private bindDaysToPage(page: PageComponent) {
@@ -46,35 +34,48 @@ class App {
     days.addEventListener('click', (e) => {
       const target = e.target! as HTMLLIElement;
       page.setOnActiveChangeListener(target.dataset.day! as DayType);
+      this.activedPage = page.getActivedPage();
+      this.bindElementToDialog();
     });
   }
 
-  private bindElementToDialog(e: Event) {
-    const btnContainer = e.currentTarget! as HTMLUListElement;
-    const day = btnContainer.dataset.day;
-    const btn = e.target! as HTMLLIElement;
-    let dialog: Dialog;
+  private bindElementToDialog = () => {
+    const dialog = new Dialog();
+    const addBtn = this.activedPage.querySelector(
+      '.addBtn'
+    )! as HTMLButtonElement;
+    addBtn.addEventListener('click', () => {
+      const addMenu = this.activedPage.querySelector(
+        '.addMenu'
+      )! as HTMLElement;
+      addMenu.addEventListener('click', (e) => {
+        const target = e.target! as HTMLElement;
+        if (target.matches('.addRoutine')) {
+          dialog.setType('Routine');
+        } else {
+          dialog.setType('Todo');
+        }
 
-    console.log(day);
-    if (btn.matches('.addRoutine')) {
-      dialog = new Dialog('Routine');
-    } else {
-      dialog = new Dialog('Todo');
-    }
-    dialog.attatchTo(document.body);
-    dialog.setOnCloseListener(() => {
-      dialog.removeFrom(document.body);
+        dialog.attatchTo(document.body);
+        dialog.setOnCloseListener(() => {
+          dialog.removeFrom(document.body);
+        });
+
+        dialog.setOnAddListener(() => {
+          dialog.removeFrom(document.body);
+        });
+      });
     });
+  };
 
-    dialog.setOnAddListener(() => {
-      dialog.removeFrom(document.body);
-      this.addItem(dialog.type, dialog.time, dialog.title);
-    });
-  }
-
-  private addItem(type: string, time: string, title: string) {
-    console.log(type, time, title);
-  }
+  // private addItem = (
+  //   type: string,
+  //   time: string,
+  //   title: string,
+  //   day: string
+  // ) => {
+  //   console.log(type, time, title, day);
+  // };
 }
 
 new App(document.querySelector('.document')! as HTMLElement);

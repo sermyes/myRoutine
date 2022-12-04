@@ -4,6 +4,29 @@ import { Dialog } from './dialog/dialog.js';
 class App {
     constructor(appRoot) {
         this.appRoot = appRoot;
+        this.bindElementToDialog = () => {
+            const dialog = new Dialog();
+            const addBtn = this.activedPage.querySelector('.addBtn');
+            addBtn.addEventListener('click', () => {
+                const addMenu = this.activedPage.querySelector('.addMenu');
+                addMenu.addEventListener('click', (e) => {
+                    const target = e.target;
+                    if (target.matches('.addRoutine')) {
+                        dialog.setType('Routine');
+                    }
+                    else {
+                        dialog.setType('Todo');
+                    }
+                    dialog.attatchTo(document.body);
+                    dialog.setOnCloseListener(() => {
+                        dialog.removeFrom(document.body);
+                    });
+                    dialog.setOnAddListener(() => {
+                        dialog.removeFrom(document.body);
+                    });
+                });
+            });
+        };
         this.today = new Date().getDay();
         this.days = new DaysComponent(this.today);
         this.daysContainer = this.appRoot.querySelector('.days__container');
@@ -11,51 +34,18 @@ class App {
         this.page = new PageComponent(this.days.getActivedDay());
         this.pageContainer = this.appRoot.querySelector('.contents__container');
         this.page.attatchTo(this.pageContainer);
+        this.activedPage = this.page.getActivedPage();
         this.bindDaysToPage(this.page);
-        const addBtns = document.querySelectorAll('.addBtn');
-        addBtns.forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                if (e.target === btn) {
-                    const parent = btn.parentElement;
-                    const ico = btn.querySelector('.addIcon');
-                    const addMenu = parent.querySelector('.addMenu');
-                    if (ico.matches('.rotate')) {
-                        addMenu.addEventListener('click', this.bindElementToDialog);
-                    }
-                }
-            });
-        });
+        this.bindElementToDialog();
     }
     bindDaysToPage(page) {
         const days = document.querySelector('.days');
         days.addEventListener('click', (e) => {
             const target = e.target;
             page.setOnActiveChangeListener(target.dataset.day);
+            this.activedPage = page.getActivedPage();
+            this.bindElementToDialog();
         });
-    }
-    bindElementToDialog(e) {
-        const btnContainer = e.currentTarget;
-        const day = btnContainer.dataset.day;
-        const btn = e.target;
-        let dialog;
-        console.log(day);
-        if (btn.matches('.addRoutine')) {
-            dialog = new Dialog('Routine');
-        }
-        else {
-            dialog = new Dialog('Todo');
-        }
-        dialog.attatchTo(document.body);
-        dialog.setOnCloseListener(() => {
-            dialog.removeFrom(document.body);
-        });
-        dialog.setOnAddListener(() => {
-            dialog.removeFrom(document.body);
-            this.addItem(dialog.type, dialog.time, dialog.title);
-        });
-    }
-    addItem(type, time, title) {
-        console.log(type, time, title);
     }
 }
 new App(document.querySelector('.document'));

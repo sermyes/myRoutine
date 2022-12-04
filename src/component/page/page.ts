@@ -2,7 +2,6 @@ import { BaseComponent, Component, DayType, Days } from './../component.js';
 import { Modal } from '../modal/modal.js';
 
 type ChangeListener = DayType;
-type AddItemsClickListener = () => void;
 type RemoveItemMenuListener = () => void;
 interface Activable extends Component {
   onActive(activedDay: DayType): void;
@@ -119,6 +118,14 @@ class PageItemComponent
     this.element.classList.remove('active');
     if (this.element.dataset.day === activedDay) {
       this.element.classList.add('active');
+    }
+  }
+
+  getActived(): HTMLElement | null {
+    if (this.element.matches('.active')) {
+      return this.element;
+    } else {
+      return null;
     }
   }
 
@@ -247,7 +254,14 @@ export class PageComponent
     this.onActive(listener);
   }
 
-  setAddItemsClickListener(listener: AddItemsClickListener) {
-    console.log(listener);
+  getActivedPage(): HTMLElement {
+    let activedPage: HTMLElement;
+    this.children.forEach((page) => {
+      const element = page.getActived();
+      if (element) {
+        activedPage = element;
+      }
+    });
+    return activedPage! as HTMLElement;
   }
 }

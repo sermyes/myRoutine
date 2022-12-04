@@ -6,6 +6,7 @@ export class Presenter {
         };
     }
     addItem() { }
+    removeItem() { }
     getItems() {
         return this.items;
     }
