@@ -51,17 +51,14 @@ export class AddButtonComponent extends BaseComponent<HTMLElement> {
   private onAddItemMenu(modal: Modal, addItemMenu: AddItemMenuComponent): void {
     const addBtn = this.element.querySelector('.addBtn')! as HTMLButtonElement;
     const addIco = this.element.querySelector('.addIcon')! as HTMLElement;
-    const footer = this.element.querySelector(
-      '.content__footer'
-    )! as HTMLElement;
 
     addBtn.addEventListener('click', () => {
       if (addIco.matches('.rotate')) {
-        this.removeItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+        this.removeItemMenu(addIco, modal, addItemMenu, addBtn);
       } else {
-        this.addItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+        this.addItemMenu(addIco, modal, addItemMenu, addBtn);
         addItemMenu.setRemoveItemMenuListener(() => {
-          this.removeItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+          this.removeItemMenu(addIco, modal, addItemMenu, addBtn);
         });
       }
     });
@@ -71,12 +68,11 @@ export class AddButtonComponent extends BaseComponent<HTMLElement> {
     addIco: HTMLElement,
     modal: Modal,
     addItemMenu: AddItemMenuComponent,
-    footer: HTMLElement,
     addBtn: HTMLButtonElement
   ) {
     addIco.classList.remove('rotate');
     modal.removeFrom(this.element);
-    addItemMenu.removeFrom(footer);
+    addItemMenu.removeFrom(this.element);
     addBtn.classList.remove('active');
   }
 
@@ -84,12 +80,11 @@ export class AddButtonComponent extends BaseComponent<HTMLElement> {
     addIco: HTMLElement,
     modal: Modal,
     addItemMenu: AddItemMenuComponent,
-    footer: HTMLElement,
     addBtn: HTMLButtonElement
   ) {
     addIco.classList.add('rotate');
     modal.attatchTo(this.element, 'afterbegin');
-    addItemMenu.attatchTo(footer, 'beforeend');
+    addItemMenu.attatchTo(this.element, 'beforeend');
     addBtn.classList.add('active');
   }
 }

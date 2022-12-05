@@ -1,8 +1,9 @@
 import { BaseComponent, Component, DayType, Days } from './../component.js';
 import { ViewOptionComponent } from './viewOption/viewOption.js';
 import { AddButtonComponent } from './addButton/addbutton.js';
-import { DailyItemsComponent } from './items/daily.js';
+import { DailyItemsComponent, ItemsContainer } from './items/daily.js';
 import { WeeklyItemsComponent } from './items/weekly.js';
+import { Items } from '../../presenter.js';
 
 type ChangeListener = DayType;
 
@@ -17,6 +18,9 @@ class PageItemComponent
   extends BaseComponent<HTMLElement>
   implements Activable
 {
+  private items?: Items;
+  private dailyItems: ItemsContainer;
+  private weeklyItems: WeeklyItemsComponent;
   constructor(private day: DayType) {
     super(`
       <div class="content" data-day>
@@ -31,10 +35,10 @@ class PageItemComponent
     const itemsContainer = this.element.querySelector(
       '.items__container'
     )! as HTMLElement;
-    const dailyItems = new DailyItemsComponent();
-    dailyItems.attatchTo(itemsContainer);
-    const weeklyItems = new WeeklyItemsComponent();
-    weeklyItems.attatchTo(itemsContainer, 'beforeend');
+    this.dailyItems = new DailyItemsComponent();
+    this.dailyItems.attatchTo(itemsContainer);
+    this.weeklyItems = new WeeklyItemsComponent();
+    this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
 
     const addButton = new AddButtonComponent(this.day);
     addButton.attatchTo(this.element, 'beforeend');
@@ -54,6 +58,11 @@ class PageItemComponent
       return null;
     }
   }
+
+  updateItems(items: Items) {
+    this.items = items;
+    this.dailyItems.updateItems(this.items, this.day);
+  }
 }
 
 // PageComponent
@@ -62,6 +71,7 @@ export class PageComponent
   implements PageContainer
 {
   private children: PageItemComponent[] = [];
+  private items?: Items;
   constructor(private activedDay: DayType) {
     super(`
       <section class="contents">
@@ -89,6 +99,13 @@ export class PageComponent
 
   setOnActiveChangeListener(listener: ChangeListener) {
     this.onActive(listener);
+  }
+
+  updateItems(items: Items) {
+    this.items = items;
+    this.children.forEach((page) => {
+      page.updateItems(this.items! as Items);
+    });
   }
 
   getActivedPage(): HTMLElement {

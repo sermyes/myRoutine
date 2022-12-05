@@ -47,6 +47,7 @@ class App {
         this.activedPage = this.page.getActivedPage();
         this.bindDaysToPage(this.page);
         this.bindElementToDialog();
+        this.page.updateItems(this.items);
     }
     bindDaysToPage(page) {
         const days = document.querySelector('.days');

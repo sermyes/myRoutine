@@ -1,10 +1,10 @@
 import { BaseComponent } from '../../component.js';
 class ItemComponent extends BaseComponent {
-    constructor() {
+    constructor(item, type) {
         super(`
 			<li class="item">
-				<span class="time">오전 08:00</span>
-				<span class="title">공복에 물마시기</span>
+				<span class="time"></span>
+				<span class="title"></span>
 				<div class="state_container">
 					<button class="stateBtn">
 						<i class="fas fa-check"></i>
@@ -15,6 +15,31 @@ class ItemComponent extends BaseComponent {
 				</button>
 			</li>
 		`);
+        this.item = item;
+        this.type = type;
+        const time = this.getTime(this.item.time);
+        const timeElement = this.element.querySelector('.time');
+        timeElement.innerText = time;
+        const titleElement = this.element.querySelector('.title');
+        if (this.type === 'Routine') {
+            titleElement.innerText = this.item.title;
+        }
+        else {
+            titleElement.innerHTML = `
+				<span class="todo_icon"></span> 
+				${this.item.title}
+			`;
+        }
+    }
+    getTime(time) {
+        let [hour, min] = time.split(':');
+        let h = parseInt(hour);
+        if (h > 12) {
+            return h - 12 < 10 ? `오후 0${h - 12}:${min}` : `오후 ${h - 12}:${min}`;
+        }
+        else {
+            return `오전 ${time}`;
+        }
     }
 }
 export class DailyItemsComponent extends BaseComponent {
@@ -23,7 +48,40 @@ export class DailyItemsComponent extends BaseComponent {
 			<ul class="daily__items">
 			</ul>
 		`);
-        const item = new ItemComponent();
-        item.attatchTo(this.element, 'beforeend');
+    }
+    updateItems(items, day) {
+        this.items = items;
+        const routineSortable = Object.entries(this.items.Routine)
+            .sort(([, a], [, b]) => {
+            const aTime = a.time.replace(':', '');
+            const bTime = b.time.replace(':', '');
+            if (aTime > bTime) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        })
+            .map((value) => value[1]);
+        const todoSortable = Object.entries(this.items.Todo[day])
+            .sort(([, a], [, b]) => {
+            const aTime = a.time.replace(':', '');
+            const bTime = b.time.replace(':', '');
+            if (aTime > bTime) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        })
+            .map((value) => value[1]);
+        routineSortable && this.refresh(routineSortable, 'Routine');
+        todoSortable && this.refresh(todoSortable, 'Todo');
+    }
+    refresh(items, type) {
+        items.forEach((item) => {
+            const itemComponent = new ItemComponent(item, type);
+            itemComponent.attatchTo(this.element, 'beforeend');
+        });
     }
 }

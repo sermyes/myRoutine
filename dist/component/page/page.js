@@ -16,10 +16,10 @@ class PageItemComponent extends BaseComponent {
         const viewOption = new ViewOptionComponent();
         viewOption.attatchTo(this.element, 'afterbegin');
         const itemsContainer = this.element.querySelector('.items__container');
-        const dailyItems = new DailyItemsComponent();
-        dailyItems.attatchTo(itemsContainer);
-        const weeklyItems = new WeeklyItemsComponent();
-        weeklyItems.attatchTo(itemsContainer, 'beforeend');
+        this.dailyItems = new DailyItemsComponent();
+        this.dailyItems.attatchTo(itemsContainer);
+        this.weeklyItems = new WeeklyItemsComponent();
+        this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
         const addButton = new AddButtonComponent(this.day);
         addButton.attatchTo(this.element, 'beforeend');
     }
@@ -36,6 +36,10 @@ class PageItemComponent extends BaseComponent {
         else {
             return null;
         }
+    }
+    updateItems(items) {
+        this.items = items;
+        this.dailyItems.updateItems(this.items, this.day);
     }
 }
 export class PageComponent extends BaseComponent {
@@ -63,6 +67,12 @@ export class PageComponent extends BaseComponent {
     }
     setOnActiveChangeListener(listener) {
         this.onActive(listener);
+    }
+    updateItems(items) {
+        this.items = items;
+        this.children.forEach((page) => {
+            page.updateItems(this.items);
+        });
     }
     getActivedPage() {
         let activedPage;

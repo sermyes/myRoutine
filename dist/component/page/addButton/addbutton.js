@@ -45,29 +45,28 @@ export class AddButtonComponent extends BaseComponent {
     onAddItemMenu(modal, addItemMenu) {
         const addBtn = this.element.querySelector('.addBtn');
         const addIco = this.element.querySelector('.addIcon');
-        const footer = this.element.querySelector('.content__footer');
         addBtn.addEventListener('click', () => {
             if (addIco.matches('.rotate')) {
-                this.removeItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+                this.removeItemMenu(addIco, modal, addItemMenu, addBtn);
             }
             else {
-                this.addItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+                this.addItemMenu(addIco, modal, addItemMenu, addBtn);
                 addItemMenu.setRemoveItemMenuListener(() => {
-                    this.removeItemMenu(addIco, modal, addItemMenu, footer, addBtn);
+                    this.removeItemMenu(addIco, modal, addItemMenu, addBtn);
                 });
             }
         });
     }
-    removeItemMenu(addIco, modal, addItemMenu, footer, addBtn) {
+    removeItemMenu(addIco, modal, addItemMenu, addBtn) {
         addIco.classList.remove('rotate');
         modal.removeFrom(this.element);
-        addItemMenu.removeFrom(footer);
+        addItemMenu.removeFrom(this.element);
         addBtn.classList.remove('active');
     }
-    addItemMenu(addIco, modal, addItemMenu, footer, addBtn) {
+    addItemMenu(addIco, modal, addItemMenu, addBtn) {
         addIco.classList.add('rotate');
         modal.attatchTo(this.element, 'afterbegin');
-        addItemMenu.attatchTo(footer, 'beforeend');
+        addItemMenu.attatchTo(this.element, 'beforeend');
         addBtn.classList.add('active');
     }
 }

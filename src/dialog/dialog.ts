@@ -34,7 +34,7 @@ export class Dialog
 							</div>
 						</div>
 						<div class="dialog__footer">
-              <span class="dialog__error">Please enter at least one charator</span>
+              <span class="dialog__error"></span>
               <button type="submit" class="dialog__submit">ADD</button>
             </div>
 					</form>
@@ -62,7 +62,11 @@ export class Dialog
 
     addBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (title.value === '' || time.value === '') {
+      if (time.value === '' || title.value === '') {
+        error.innerText =
+          time.value === ''
+            ? 'Please enter time !'
+            : 'Please enter at least one charactor !';
         this.addActive(error);
         return;
       }
