@@ -17,6 +17,10 @@ class PageItemComponent extends BaseComponent {
         viewOption.attatchTo(this.element, 'afterbegin');
         const itemsContainer = this.element.querySelector('.items__container');
         this.dailyItems = new DailyItemsComponent();
+        this.dailyItems.setOnRemoveItemListener((id, type) => {
+            this.onRemoveItemListener &&
+                this.onRemoveItemListener(id, type, this.element.dataset.day);
+        });
         this.dailyItems.attatchTo(itemsContainer);
         this.weeklyItems = new WeeklyItemsComponent();
         this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
@@ -41,6 +45,9 @@ class PageItemComponent extends BaseComponent {
         this.items = items;
         this.dailyItems.updateItems(this.items, this.day);
     }
+    setOnRemoveItemListener(listener) {
+        this.onRemoveItemListener = listener;
+    }
 }
 export class PageComponent extends BaseComponent {
     constructor(activedDay) {
@@ -55,6 +62,9 @@ export class PageComponent extends BaseComponent {
     addPages(parent) {
         for (let i = 0; i < Days.length; i++) {
             const page = new PageItemComponent(Days[i]);
+            page.setOnRemoveItemListener((id, type, day) => {
+                this.onRemoveItemListener && this.onRemoveItemListener(id, type, day);
+            });
             page.attatchTo(parent);
             this.children.push(page);
         }
@@ -83,5 +93,8 @@ export class PageComponent extends BaseComponent {
             }
         });
         return activedPage;
+    }
+    setOnRemoveItemListener(listener) {
+        this.onRemoveItemListener = listener;
     }
 }

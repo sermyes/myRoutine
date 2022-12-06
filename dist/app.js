@@ -33,7 +33,7 @@ class App {
         this.addItem = (type, time, title, day) => {
             const newItems = this.presenter.addItem(type, time, title, day);
             this.items = newItems;
-            console.log(this.items);
+            this.page.updateItems(this.items);
         };
         this.presenter = new Presenter();
         this.items = this.presenter.getItems();
@@ -43,6 +43,10 @@ class App {
         this.days.attatchTo(this.daysContainer);
         this.page = new PageComponent(this.days.getActivedDay());
         this.pageContainer = this.appRoot.querySelector('.contents__container');
+        this.page.setOnRemoveItemListener((id, type, day) => {
+            this.items = this.presenter.removeItem(id, type, day);
+            this.page.updateItems(this.items);
+        });
         this.page.attatchTo(this.pageContainer);
         this.activedPage = this.page.getActivedPage();
         this.bindDaysToPage(this.page);
@@ -55,7 +59,6 @@ class App {
             const target = e.target;
             page.setOnActiveChangeListener(target.dataset.day);
             this.activedPage = page.getActivedPage();
-            this.bindElementToDialog();
         });
     }
 }

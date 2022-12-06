@@ -2,7 +2,7 @@ import { BaseComponent } from '../../component.js';
 class ItemComponent extends BaseComponent {
     constructor(item, type) {
         super(`
-			<li class="item">
+			<li class="item" data-id="">
 				<span class="time"></span>
 				<span class="title"></span>
 				<div class="state_container">
@@ -20,6 +20,7 @@ class ItemComponent extends BaseComponent {
         const time = this.getTime(this.item.time);
         const timeElement = this.element.querySelector('.time');
         timeElement.innerText = time;
+        this.element.dataset.id = this.item.id + '';
         const titleElement = this.element.querySelector('.title');
         if (this.type === 'Routine') {
             titleElement.innerText = this.item.title;
@@ -30,6 +31,14 @@ class ItemComponent extends BaseComponent {
 				${this.item.title}
 			`;
         }
+        const deleteBtn = this.element.querySelector('.deleteBtn');
+        deleteBtn.addEventListener('click', () => {
+            this.onRemoveItemListener &&
+                this.onRemoveItemListener(this.element.dataset.id, this.type);
+        });
+    }
+    setOnRemoveItemListener(listener) {
+        this.onRemoveItemListener = listener;
     }
     getTime(time) {
         let [hour, min] = time.split(':');
@@ -75,13 +84,20 @@ export class DailyItemsComponent extends BaseComponent {
             }
         })
             .map((value) => value[1]);
+        this.element.innerHTML = '';
         routineSortable && this.refresh(routineSortable, 'Routine');
         todoSortable && this.refresh(todoSortable, 'Todo');
     }
     refresh(items, type) {
         items.forEach((item) => {
             const itemComponent = new ItemComponent(item, type);
+            itemComponent.setOnRemoveItemListener((id, type) => {
+                this.onRemoveItemListener && this.onRemoveItemListener(id, type);
+            });
             itemComponent.attatchTo(this.element, 'beforeend');
         });
+    }
+    setOnRemoveItemListener(listener) {
+        this.onRemoveItemListener = listener;
     }
 }

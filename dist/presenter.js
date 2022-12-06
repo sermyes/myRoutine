@@ -6,9 +6,48 @@ export class Presenter {
         };
         this.items = {
             Routine: {
-                0: { id: 0, time: '14:00', title: 'test0', state: null, rest: [] },
-                1: { id: 1, time: '04:00', title: 'test1', state: null, rest: [] },
-                2: { id: 2, time: '19:00', title: 'test2', state: null, rest: [] }
+                0: {
+                    id: 0,
+                    time: '14:00',
+                    title: 'test0',
+                    state: {
+                        Mon: null,
+                        Tue: null,
+                        Wed: null,
+                        Thu: null,
+                        Fri: null,
+                        Sat: null,
+                        Sun: null
+                    }
+                },
+                1: {
+                    id: 1,
+                    time: '04:00',
+                    title: 'test1',
+                    state: {
+                        Mon: null,
+                        Tue: null,
+                        Wed: null,
+                        Thu: null,
+                        Fri: null,
+                        Sat: null,
+                        Sun: null
+                    }
+                },
+                2: {
+                    id: 2,
+                    time: '19:00',
+                    title: 'test2',
+                    state: {
+                        Mon: null,
+                        Tue: null,
+                        Wed: null,
+                        Thu: null,
+                        Fri: null,
+                        Sat: null,
+                        Sun: null
+                    }
+                }
             },
             Todo: {
                 Mon: {
@@ -31,17 +70,34 @@ export class Presenter {
     }
     addItem(type, time, title, day) {
         const id = Date.now();
-        let item = { id, time, title, state: null };
+        let item = { id, time, title };
         if (type === 'Routine') {
-            const routineItem = Object.assign(Object.assign({}, item), { rest: [] });
+            const routineItem = Object.assign(Object.assign({}, item), { state: {
+                    Mon: null,
+                    Tue: null,
+                    Wed: null,
+                    Thu: null,
+                    Fri: null,
+                    Sat: null,
+                    Sun: null
+                } });
             this.items[type][id] = routineItem;
         }
         else {
-            this.items[type][day][id] = item;
+            const todoItem = Object.assign(Object.assign({}, item), { state: null });
+            this.items[type][day][id] = todoItem;
         }
-        return this.items;
+        return this.getItems();
     }
-    removeItem() { }
+    removeItem(id, type, day) {
+        if (type === 'Routine') {
+            delete this.items[type][id];
+        }
+        else {
+            delete this.items[type][day][id];
+        }
+        return this.getItems();
+    }
     getItems() {
         return this.items;
     }

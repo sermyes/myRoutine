@@ -6,18 +6,27 @@ import {
 } from '../../../presenter.js';
 import { BaseComponent, Component, DayType } from '../../component.js';
 
-export interface ItemsContainer extends Component {
+type OnRemoveItemListener = (id: string, type: DataType) => void;
+interface ItemContainer extends Component {
+  setOnRemoveItemListener(listener: OnRemoveItemListener): void;
+}
+
+export interface ItemsContainer extends Component, ItemContainer {
   updateItems(items: Items, day: DayType): void;
   refresh(items: RoutineMetaData[], type: DataType): void;
 }
 
-class ItemComponent extends BaseComponent<HTMLElement> {
+class ItemComponent
+  extends BaseComponent<HTMLElement>
+  implements ItemContainer
+{
+  private onRemoveItemListener?: OnRemoveItemListener;
   constructor(
     private item: RoutineMetaData | TodoMetaData,
     private type: DataType
   ) {
     super(`
-			<li class="item">
+			<li class="item" data-id="">
 				<span class="time"></span>
 				<span class="title"></span>
 				<div class="state_container">
@@ -34,6 +43,7 @@ class ItemComponent extends BaseComponent<HTMLElement> {
     const time = this.getTime(this.item.time);
     const timeElement = this.element.querySelector('.time')! as HTMLElement;
     timeElement.innerText = time;
+    this.element.dataset.id = this.item.id + '';
 
     const titleElement = this.element.querySelector('.title')! as HTMLElement;
     if (this.type === 'Routine') {
@@ -44,6 +54,21 @@ class ItemComponent extends BaseComponent<HTMLElement> {
 				${this.item.title}
 			`;
     }
+
+    const deleteBtn = this.element.querySelector(
+      '.deleteBtn'
+    )! as HTMLButtonElement;
+    deleteBtn.addEventListener('click', () => {
+      this.onRemoveItemListener &&
+        this.onRemoveItemListener(
+          this.element.dataset.id! as string,
+          this.type
+        );
+    });
+  }
+
+  setOnRemoveItemListener(listener: OnRemoveItemListener) {
+    this.onRemoveItemListener = listener;
   }
 
   private getTime(time: string): string {
@@ -61,6 +86,7 @@ export class DailyItemsComponent
   extends BaseComponent<HTMLElement>
   implements ItemsContainer
 {
+  private onRemoveItemListener?: OnRemoveItemListener;
   private items?: Items;
   constructor() {
     super(`
@@ -94,6 +120,7 @@ export class DailyItemsComponent
       })
       .map((value) => value[1]);
 
+    this.element.innerHTML = '';
     routineSortable && this.refresh(routineSortable, 'Routine');
     todoSortable && this.refresh(todoSortable, 'Todo');
   }
@@ -101,7 +128,14 @@ export class DailyItemsComponent
   refresh(items: RoutineMetaData[] | TodoMetaData[], type: DataType) {
     items.forEach((item) => {
       const itemComponent = new ItemComponent(item, type);
+      itemComponent.setOnRemoveItemListener((id, type) => {
+        this.onRemoveItemListener && this.onRemoveItemListener(id, type);
+      });
       itemComponent.attatchTo(this.element, 'beforeend');
     });
+  }
+
+  setOnRemoveItemListener(listener: OnRemoveItemListener) {
+    this.onRemoveItemListener = listener;
   }
 }

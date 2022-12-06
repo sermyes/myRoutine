@@ -3,24 +3,30 @@ import { ViewOptionComponent } from './viewOption/viewOption.js';
 import { AddButtonComponent } from './addButton/addbutton.js';
 import { DailyItemsComponent, ItemsContainer } from './items/daily.js';
 import { WeeklyItemsComponent } from './items/weekly.js';
-import { Items } from '../../presenter.js';
+import { DataType, Items } from '../../presenter.js';
 
 type ChangeListener = DayType;
-
+type OnRemoveItemListener = (id: string, type: DataType, day: DayType) => void;
 interface Activable extends Component {
   onActive(activedDay: DayType): void;
 }
-interface PageContainer extends Component, Activable {
+
+interface PageItemContainer extends Component {
+  setOnRemoveItemListener(listener: OnRemoveItemListener): void;
+}
+
+interface PageContainer extends Component, Activable, PageItemContainer {
   setOnActiveChangeListener(listener: ChangeListener): void;
 }
 
 class PageItemComponent
   extends BaseComponent<HTMLElement>
-  implements Activable
+  implements Activable, PageItemContainer
 {
   private items?: Items;
   private dailyItems: ItemsContainer;
   private weeklyItems: WeeklyItemsComponent;
+  private onRemoveItemListener?: OnRemoveItemListener;
   constructor(private day: DayType) {
     super(`
       <div class="content" data-day>
@@ -36,6 +42,14 @@ class PageItemComponent
       '.items__container'
     )! as HTMLElement;
     this.dailyItems = new DailyItemsComponent();
+    this.dailyItems.setOnRemoveItemListener((id, type) => {
+      this.onRemoveItemListener &&
+        this.onRemoveItemListener(
+          id,
+          type,
+          this.element.dataset.day! as DayType
+        );
+    });
     this.dailyItems.attatchTo(itemsContainer);
     this.weeklyItems = new WeeklyItemsComponent();
     this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
@@ -63,6 +77,10 @@ class PageItemComponent
     this.items = items;
     this.dailyItems.updateItems(this.items, this.day);
   }
+
+  setOnRemoveItemListener(listener: OnRemoveItemListener): void {
+    this.onRemoveItemListener = listener;
+  }
 }
 
 // PageComponent
@@ -72,6 +90,7 @@ export class PageComponent
 {
   private children: PageItemComponent[] = [];
   private items?: Items;
+  private onRemoveItemListener?: OnRemoveItemListener;
   constructor(private activedDay: DayType) {
     super(`
       <section class="contents">
@@ -84,6 +103,9 @@ export class PageComponent
   private addPages(parent: HTMLElement): void {
     for (let i = 0; i < Days.length; i++) {
       const page = new PageItemComponent(Days[i]! as DayType);
+      page.setOnRemoveItemListener((id, type, day) => {
+        this.onRemoveItemListener && this.onRemoveItemListener(id, type, day);
+      });
       page.attatchTo(parent);
       this.children.push(page);
     }
@@ -117,5 +139,9 @@ export class PageComponent
       }
     });
     return activedPage! as HTMLElement;
+  }
+
+  setOnRemoveItemListener(listener: OnRemoveItemListener): void {
+    this.onRemoveItemListener = listener;
   }
 }
