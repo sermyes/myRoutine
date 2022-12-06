@@ -1,7 +1,17 @@
 import { BaseComponent } from '../../component.js';
 import { Modal } from './../../modal/modal.js';
 
-class FilterMenuComponent extends BaseComponent<HTMLElement> {
+type OnSortedItemsListener = (type: FilterType) => void;
+export type FilterType = 'All' | 'Routine' | 'Todo';
+interface FilterContainer {
+  setOnSortedItemsListener(listener: OnSortedItemsListener): void;
+}
+
+class FilterMenuComponent
+  extends BaseComponent<HTMLElement>
+  implements FilterContainer
+{
+  private onSortedItemsListener?: OnSortedItemsListener;
   constructor() {
     super(`
       <ul class="filterMenu">
@@ -16,10 +26,26 @@ class FilterMenuComponent extends BaseComponent<HTMLElement> {
         </li>
       </ul>
     `);
+
+    this.element.addEventListener('click', (e) => {
+      const target = e.target! as HTMLElement;
+      this.onSortedItemsListener &&
+        this.onSortedItemsListener(target.innerText! as FilterType);
+    });
+  }
+
+  setOnSortedItemsListener(listener: OnSortedItemsListener) {
+    this.onSortedItemsListener = listener;
   }
 }
 
-export class ViewOptionComponent extends BaseComponent<HTMLElement> {
+export class ViewOptionComponent
+  extends BaseComponent<HTMLElement>
+  implements FilterContainer
+{
+  private onSortedItemsListener?: OnSortedItemsListener;
+  private modal: Modal;
+  private filterMenu: FilterMenuComponent;
   constructor() {
     super(`
 			<div class="content__header">
@@ -41,9 +67,12 @@ export class ViewOptionComponent extends BaseComponent<HTMLElement> {
 			</div>
 		`);
 
-    const modal = new Modal();
-    const filterMenu = new FilterMenuComponent();
-    this.onFilterMenu(modal, filterMenu);
+    this.modal = new Modal();
+    this.filterMenu = new FilterMenuComponent();
+    this.filterMenu.setOnSortedItemsListener((type) => {
+      this.onSortedItemsListener && this.onSortedItemsListener(type);
+    });
+    this.onFilterMenu();
 
     this.changeViewOption();
   }
@@ -73,7 +102,7 @@ export class ViewOptionComponent extends BaseComponent<HTMLElement> {
     });
   }
 
-  private onFilterMenu(modal: Modal, filterMenu: FilterMenuComponent) {
+  private onFilterMenu() {
     const filterContainer = this.element.querySelector(
       '.filter_container'
     )! as HTMLElement;
@@ -82,14 +111,29 @@ export class ViewOptionComponent extends BaseComponent<HTMLElement> {
     )! as HTMLElement;
     filterOption.addEventListener('click', () => {
       if (filterOption.matches('.active')) {
-        modal.removeFrom(this.element);
+        this.modal.removeFrom(this.element);
         filterOption.classList.remove('active');
-        filterMenu.removeFrom(filterContainer);
+        this.filterMenu.removeFrom(filterContainer);
       } else {
-        modal.attatchTo(this.element, 'afterbegin');
+        this.modal.attatchTo(this.element, 'afterbegin');
         filterOption.classList.add('active');
-        filterMenu.attatchTo(filterContainer);
+        this.filterMenu.attatchTo(filterContainer);
       }
     });
+  }
+
+  setOnSortedItemsListener(listener: OnSortedItemsListener): void {
+    this.onSortedItemsListener = (type) => {
+      listener(type);
+      const filterContainer = this.element.querySelector(
+        '.filter_container'
+      )! as HTMLElement;
+      const filterOption = this.element.querySelector(
+        '.filter_option'
+      )! as HTMLElement;
+      this.modal.removeFrom(this.element);
+      filterOption.classList.remove('active');
+      this.filterMenu.removeFrom(filterContainer);
+    };
   }
 }

@@ -31,18 +31,18 @@ class App {
       this.items = this.presenter.removeItem(id, type, day);
       this.page.updateItems(this.items);
     });
+    this.page.setOnStateChangeListener((id, type, day, state) => {
+      this.items = this.presenter.updateItem(id, type, day, state);
+      this.page.updateItems(this.items);
+    });
     this.page.attatchTo(this.pageContainer);
 
     this.activedPage = this.page.getActivedPage();
     this.bindDaysToPage(this.page);
     this.bindElementToDialog();
 
-    // 1. 초기 data 보여주기.
     this.page.updateItems(this.items);
 
-    // 2. 데이터 추가시 refresh.
-    // 3. 데이터 삭제시 refresh.
-    // 4. 상태변경시 refresh.
     // 5. weekly 보여주기.
   }
 

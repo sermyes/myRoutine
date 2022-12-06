@@ -11,13 +11,13 @@ export class Presenter {
                     time: '14:00',
                     title: 'test0',
                     state: {
-                        Mon: null,
-                        Tue: null,
-                        Wed: null,
-                        Thu: null,
-                        Fri: null,
-                        Sat: null,
-                        Sun: null
+                        Mon: 'cancel',
+                        Tue: 'cancel',
+                        Wed: 'cancel',
+                        Thu: 'cancel',
+                        Fri: 'cancel',
+                        Sat: 'cancel',
+                        Sun: 'cancel'
                     }
                 },
                 1: {
@@ -25,13 +25,13 @@ export class Presenter {
                     time: '04:00',
                     title: 'test1',
                     state: {
-                        Mon: null,
-                        Tue: null,
-                        Wed: null,
-                        Thu: null,
-                        Fri: null,
-                        Sat: null,
-                        Sun: null
+                        Mon: 'cancel',
+                        Tue: 'cancel',
+                        Wed: 'cancel',
+                        Thu: 'cancel',
+                        Fri: 'cancel',
+                        Sat: 'cancel',
+                        Sun: 'cancel'
                     }
                 },
                 2: {
@@ -39,26 +39,26 @@ export class Presenter {
                     time: '19:00',
                     title: 'test2',
                     state: {
-                        Mon: null,
-                        Tue: null,
-                        Wed: null,
-                        Thu: null,
-                        Fri: null,
-                        Sat: null,
-                        Sun: null
+                        Mon: 'cancel',
+                        Tue: 'cancel',
+                        Wed: 'cancel',
+                        Thu: 'cancel',
+                        Fri: 'cancel',
+                        Sat: 'cancel',
+                        Sun: 'cancel'
                     }
                 }
             },
             Todo: {
                 Mon: {
-                    3: { id: 3, time: '08:00', title: 'test3', state: null },
-                    4: { id: 4, time: '05:00', title: 'test4', state: null },
-                    5: { id: 5, time: '06:00', title: 'test5', state: null }
+                    3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
+                    4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' },
+                    5: { id: 5, time: '06:00', title: 'test5', state: 'cancel' }
                 },
                 Tue: {
-                    3: { id: 3, time: '08:00', title: 'test3', state: null },
-                    4: { id: 4, time: '05:00', title: 'test4', state: null },
-                    5: { id: 5, time: '12:00', title: 'test6', state: null }
+                    3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
+                    4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' },
+                    5: { id: 5, time: '12:00', title: 'test6', state: 'cancel' }
                 },
                 Wed: {},
                 Thu: {},
@@ -73,18 +73,18 @@ export class Presenter {
         let item = { id, time, title };
         if (type === 'Routine') {
             const routineItem = Object.assign(Object.assign({}, item), { state: {
-                    Mon: null,
-                    Tue: null,
-                    Wed: null,
-                    Thu: null,
-                    Fri: null,
-                    Sat: null,
-                    Sun: null
+                    Mon: 'cancel',
+                    Tue: 'cancel',
+                    Wed: 'cancel',
+                    Thu: 'cancel',
+                    Fri: 'cancel',
+                    Sat: 'cancel',
+                    Sun: 'cancel'
                 } });
             this.items[type][id] = routineItem;
         }
         else {
-            const todoItem = Object.assign(Object.assign({}, item), { state: null });
+            const todoItem = Object.assign(Object.assign({}, item), { state: 'cancel' });
             this.items[type][day][id] = todoItem;
         }
         return this.getItems();
@@ -95,6 +95,15 @@ export class Presenter {
         }
         else {
             delete this.items[type][day][id];
+        }
+        return this.getItems();
+    }
+    updateItem(id, type, day, state) {
+        if (type === 'Routine') {
+            this.items[type][id].state[day] = state;
+        }
+        else {
+            this.items[type][day][id].state = state;
         }
         return this.getItems();
     }

@@ -15,6 +15,14 @@ class FilterMenuComponent extends BaseComponent {
         </li>
       </ul>
     `);
+        this.element.addEventListener('click', (e) => {
+            const target = e.target;
+            this.onSortedItemsListener &&
+                this.onSortedItemsListener(target.innerText);
+        });
+    }
+    setOnSortedItemsListener(listener) {
+        this.onSortedItemsListener = listener;
     }
 }
 export class ViewOptionComponent extends BaseComponent {
@@ -38,9 +46,12 @@ export class ViewOptionComponent extends BaseComponent {
 				</div>
 			</div>
 		`);
-        const modal = new Modal();
-        const filterMenu = new FilterMenuComponent();
-        this.onFilterMenu(modal, filterMenu);
+        this.modal = new Modal();
+        this.filterMenu = new FilterMenuComponent();
+        this.filterMenu.setOnSortedItemsListener((type) => {
+            this.onSortedItemsListener && this.onSortedItemsListener(type);
+        });
+        this.onFilterMenu();
         this.changeViewOption();
     }
     changeViewOption() {
@@ -62,20 +73,30 @@ export class ViewOptionComponent extends BaseComponent {
             }
         });
     }
-    onFilterMenu(modal, filterMenu) {
+    onFilterMenu() {
         const filterContainer = this.element.querySelector('.filter_container');
         const filterOption = this.element.querySelector('.filter_option');
         filterOption.addEventListener('click', () => {
             if (filterOption.matches('.active')) {
-                modal.removeFrom(this.element);
+                this.modal.removeFrom(this.element);
                 filterOption.classList.remove('active');
-                filterMenu.removeFrom(filterContainer);
+                this.filterMenu.removeFrom(filterContainer);
             }
             else {
-                modal.attatchTo(this.element, 'afterbegin');
+                this.modal.attatchTo(this.element, 'afterbegin');
                 filterOption.classList.add('active');
-                filterMenu.attatchTo(filterContainer);
+                this.filterMenu.attatchTo(filterContainer);
             }
         });
+    }
+    setOnSortedItemsListener(listener) {
+        this.onSortedItemsListener = (type) => {
+            listener(type);
+            const filterContainer = this.element.querySelector('.filter_container');
+            const filterOption = this.element.querySelector('.filter_option');
+            this.modal.removeFrom(this.element);
+            filterOption.classList.remove('active');
+            this.filterMenu.removeFrom(filterContainer);
+        };
     }
 }

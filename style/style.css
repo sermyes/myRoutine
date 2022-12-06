@@ -403,11 +403,22 @@ body.dark {
   font-weight: 500;
 }
 
-.state_container {
+.state {
   flex-basis: 5%;
 }
 
+.state_container {
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .stateBtn {
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: transparent;
   border: 1px solid var(--color-dark);
   min-width: 18px;
@@ -417,6 +428,46 @@ body.dark {
 
 .stateBtn i {
   font-size: 16px;
+}
+
+/* stateMenu */
+.stateMenu {
+  position: absolute;
+  right: 110%;
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  margin: 0;
+  padding: 0.1em;
+}
+
+.stateMenu li {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-right: 0.4em;
+  background: var(--color-white);
+  padding: 0.2em;
+  border-radius: 5px;
+  border: 1px solid var(--color-black);
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.stateMenu li:last-child {
+  margin-right: 0;
+}
+
+.stateMenu li:hover {
+  opacity: 1;
+}
+
+.stateMenu li * {
+  pointer-events: none;
+}
+
+.stateMenu li i {
+  margin-right: 0.2em;
 }
 
 .deleteBtn {

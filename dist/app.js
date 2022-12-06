@@ -47,6 +47,10 @@ class App {
             this.items = this.presenter.removeItem(id, type, day);
             this.page.updateItems(this.items);
         });
+        this.page.setOnStateChangeListener((id, type, day, state) => {
+            this.items = this.presenter.updateItem(id, type, day, state);
+            this.page.updateItems(this.items);
+        });
         this.page.attatchTo(this.pageContainer);
         this.activedPage = this.page.getActivedPage();
         this.bindDaysToPage(this.page);

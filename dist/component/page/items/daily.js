@@ -1,15 +1,12 @@
 import { BaseComponent } from '../../component.js';
+import { StateContainerComponent } from './state/state.js';
 class ItemComponent extends BaseComponent {
-    constructor(item, type) {
+    constructor(item, type, day) {
         super(`
 			<li class="item" data-id="">
 				<span class="time"></span>
 				<span class="title"></span>
-				<div class="state_container">
-					<button class="stateBtn">
-						<i class="fas fa-check"></i>
-					</button>
-				</div>
+				<div class="state"></div>
 				<button class="deleteBtn">
 					<i class="fas fa-trash-alt"></i>
 				</button>
@@ -17,6 +14,7 @@ class ItemComponent extends BaseComponent {
 		`);
         this.item = item;
         this.type = type;
+        this.day = day;
         const time = this.getTime(this.item.time);
         const timeElement = this.element.querySelector('.time');
         timeElement.innerText = time;
@@ -36,9 +34,22 @@ class ItemComponent extends BaseComponent {
             this.onRemoveItemListener &&
                 this.onRemoveItemListener(this.element.dataset.id, this.type);
         });
+        const state = this.type === 'Todo'
+            ? this.item.state
+            : this.item.state[this.day];
+        const stateElement = this.element.querySelector('.state');
+        const stateContainer = new StateContainerComponent(state);
+        stateContainer.setOnStateChangeListener((state) => {
+            this.onStateChangeListener &&
+                this.onStateChangeListener(this.element.dataset.id, this.type, state);
+        });
+        stateContainer.attatchTo(stateElement);
     }
     setOnRemoveItemListener(listener) {
         this.onRemoveItemListener = listener;
+    }
+    setOnStateChangeListener(listener) {
+        this.onStateChangeListener = listener;
     }
     getTime(time) {
         let [hour, min] = time.split(':');
@@ -58,46 +69,67 @@ export class DailyItemsComponent extends BaseComponent {
 			</ul>
 		`);
     }
-    updateItems(items, day) {
+    updateItems(items, day, type) {
         this.items = items;
-        const routineSortable = Object.entries(this.items.Routine)
-            .sort(([, a], [, b]) => {
-            const aTime = a.time.replace(':', '');
-            const bTime = b.time.replace(':', '');
-            if (aTime > bTime) {
-                return 1;
-            }
-            else {
-                return -1;
-            }
-        })
-            .map((value) => value[1]);
-        const todoSortable = Object.entries(this.items.Todo[day])
-            .sort(([, a], [, b]) => {
-            const aTime = a.time.replace(':', '');
-            const bTime = b.time.replace(':', '');
-            if (aTime > bTime) {
-                return 1;
-            }
-            else {
-                return -1;
-            }
-        })
-            .map((value) => value[1]);
+        const routineSortable = this.sortRoutine(this.items);
+        const todoSortable = this.sortTodo(this.items, day);
         this.element.innerHTML = '';
-        routineSortable && this.refresh(routineSortable, 'Routine');
-        todoSortable && this.refresh(todoSortable, 'Todo');
+        if (type === 'All') {
+            routineSortable && this.refresh(routineSortable, 'Routine', day);
+            todoSortable && this.refresh(todoSortable, 'Todo', day);
+        }
+        else if (type === 'Routine') {
+            routineSortable && this.refresh(routineSortable, 'Routine', day);
+        }
+        else if (type === 'Todo') {
+            todoSortable && this.refresh(todoSortable, 'Todo', day);
+        }
     }
-    refresh(items, type) {
+    sortRoutine(items) {
+        return Object.entries(items.Routine)
+            .sort(([, a], [, b]) => {
+            const aTime = a.time.replace(':', '');
+            const bTime = b.time.replace(':', '');
+            if (aTime > bTime) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        })
+            .map((value) => value[1]);
+    }
+    sortTodo(items, day) {
+        return Object.entries(items.Todo[day])
+            .sort(([, a], [, b]) => {
+            const aTime = a.time.replace(':', '');
+            const bTime = b.time.replace(':', '');
+            if (aTime > bTime) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        })
+            .map((value) => value[1]);
+    }
+    refresh(items, type, day) {
         items.forEach((item) => {
-            const itemComponent = new ItemComponent(item, type);
+            const itemComponent = new ItemComponent(item, type, day);
             itemComponent.setOnRemoveItemListener((id, type) => {
                 this.onRemoveItemListener && this.onRemoveItemListener(id, type);
+            });
+            itemComponent.setOnStateChangeListener((id, type, state) => {
+                this.onStateChangeListener &&
+                    this.onStateChangeListener(id, type, state);
             });
             itemComponent.attatchTo(this.element, 'beforeend');
         });
     }
     setOnRemoveItemListener(listener) {
         this.onRemoveItemListener = listener;
+    }
+    setOnStateChangeListener(listener) {
+        this.onStateChangeListener = listener;
     }
 }

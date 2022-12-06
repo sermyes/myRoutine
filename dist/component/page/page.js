@@ -14,12 +14,19 @@ class PageItemComponent extends BaseComponent {
         this.day = day;
         this.element.dataset.day = this.day;
         const viewOption = new ViewOptionComponent();
+        viewOption.setOnSortedItemsListener((type) => {
+            this.sortedItems(type);
+        });
         viewOption.attatchTo(this.element, 'afterbegin');
         const itemsContainer = this.element.querySelector('.items__container');
         this.dailyItems = new DailyItemsComponent();
         this.dailyItems.setOnRemoveItemListener((id, type) => {
             this.onRemoveItemListener &&
                 this.onRemoveItemListener(id, type, this.element.dataset.day);
+        });
+        this.dailyItems.setOnStateChangeListener((id, type, state) => {
+            this.onStateChangeListener &&
+                this.onStateChangeListener(id, type, this.element.dataset.day, state);
         });
         this.dailyItems.attatchTo(itemsContainer);
         this.weeklyItems = new WeeklyItemsComponent();
@@ -41,12 +48,18 @@ class PageItemComponent extends BaseComponent {
             return null;
         }
     }
+    sortedItems(type) {
+        this.dailyItems.updateItems(this.items, this.day, type);
+    }
     updateItems(items) {
         this.items = items;
-        this.dailyItems.updateItems(this.items, this.day);
+        this.dailyItems.updateItems(this.items, this.day, 'All');
     }
     setOnRemoveItemListener(listener) {
         this.onRemoveItemListener = listener;
+    }
+    setOnStateChangeListener(listener) {
+        this.onStateChangeListener = listener;
     }
 }
 export class PageComponent extends BaseComponent {
@@ -64,6 +77,10 @@ export class PageComponent extends BaseComponent {
             const page = new PageItemComponent(Days[i]);
             page.setOnRemoveItemListener((id, type, day) => {
                 this.onRemoveItemListener && this.onRemoveItemListener(id, type, day);
+            });
+            page.setOnStateChangeListener((id, type, day, state) => {
+                this.onStateChangeListener &&
+                    this.onStateChangeListener(id, type, day, state);
             });
             page.attatchTo(parent);
             this.children.push(page);
@@ -96,5 +113,8 @@ export class PageComponent extends BaseComponent {
     }
     setOnRemoveItemListener(listener) {
         this.onRemoveItemListener = listener;
+    }
+    setOnStateChangeListener(listener) {
+        this.onStateChangeListener = listener;
     }
 }
