@@ -5,31 +5,6 @@ import { Presenter } from './presenter.js';
 class App {
     constructor(appRoot) {
         this.appRoot = appRoot;
-        this.bindElementToDialog = () => {
-            const dialog = new Dialog();
-            const addBtn = this.activedPage.querySelector('.addBtn');
-            addBtn.addEventListener('click', () => {
-                const addMenu = this.activedPage.querySelector('.addMenu');
-                const day = addMenu.dataset.day;
-                addMenu.addEventListener('click', (e) => {
-                    const target = e.target;
-                    if (target.matches('.addRoutine')) {
-                        dialog.setType('Routine');
-                    }
-                    else {
-                        dialog.setType('Todo');
-                    }
-                    dialog.attatchTo(document.body);
-                    dialog.setOnCloseListener(() => {
-                        dialog.removeFrom(document.body);
-                    });
-                    dialog.setOnAddListener(() => {
-                        dialog.removeFrom(document.body);
-                        this.addItem(dialog.type, dialog.time, dialog.title, day);
-                    });
-                });
-            });
-        };
         this.addItem = (type, time, title, day) => {
             const newItems = this.presenter.addItem(type, time, title, day);
             this.items = newItems;
@@ -39,6 +14,7 @@ class App {
         this.items = this.presenter.getItems();
         this.today = new Date().getDay();
         this.days = new DaysComponent(this.today);
+        this.dialog = new Dialog();
         this.daysContainer = this.appRoot.querySelector('.days__container');
         this.days.attatchTo(this.daysContainer);
         this.page = new PageComponent(this.days.getActivedDay());
@@ -51,10 +27,19 @@ class App {
             this.items = this.presenter.updateItem(id, type, day, state);
             this.page.updateItems(this.items);
         });
+        this.page.setOnBindDialogListener((type, day) => {
+            this.dialog.setType(type);
+            this.dialog.attatchTo(document.body);
+            this.dialog.setOnCloseListener(() => {
+                this.dialog.removeFrom(document.body);
+            });
+            this.dialog.setOnAddListener(() => {
+                this.dialog.removeFrom(document.body);
+                this.addItem(this.dialog.type, this.dialog.time, this.dialog.title, day);
+            });
+        });
         this.page.attatchTo(this.pageContainer);
-        this.activedPage = this.page.getActivedPage();
         this.bindDaysToPage(this.page);
-        this.bindElementToDialog();
         this.page.updateItems(this.items);
     }
     bindDaysToPage(page) {
@@ -62,7 +47,6 @@ class App {
         days.addEventListener('click', (e) => {
             const target = e.target;
             page.setOnActiveChangeListener(target.dataset.day);
-            this.activedPage = page.getActivedPage();
         });
     }
 }

@@ -1,6 +1,5 @@
 import {
   DataType,
-  Items,
   RoutineMetaData,
   RoutineState,
   StateType,
@@ -22,7 +21,12 @@ interface ItemContainer extends Component {
 }
 
 export interface ItemsContainer extends Component, ItemContainer {
-  updateItems(items: Items, day: DayType, type: FilterType): void;
+  updateItems(
+    routineData: RoutineMetaData[],
+    todoData: TodoMetaData[],
+    day: DayType,
+    type: FilterType
+  ): void;
   refresh(items: RoutineMetaData[], type: DataType, day: DayType): void;
 }
 
@@ -115,7 +119,6 @@ export class DailyItemsComponent
 {
   private onRemoveItemListener?: OnRemoveItemListener;
   private onStateChangeListener?: OnStateChangeListener;
-  private items?: Items;
   constructor() {
     super(`
 			<ul class="daily__items">
@@ -123,48 +126,21 @@ export class DailyItemsComponent
 		`);
   }
 
-  updateItems(items: Items, day: DayType, type: FilterType) {
-    this.items = items;
-    const routineSortable = this.sortRoutine(this.items);
-    const todoSortable = this.sortTodo(this.items, day);
-
+  updateItems(
+    routineData: RoutineMetaData[],
+    todoData: TodoMetaData[],
+    day: DayType,
+    type: FilterType
+  ) {
     this.element.innerHTML = '';
     if (type === 'All') {
-      routineSortable && this.refresh(routineSortable, 'Routine', day);
-      todoSortable && this.refresh(todoSortable, 'Todo', day);
+      this.refresh(routineData, 'Routine', day);
+      this.refresh(todoData, 'Todo', day);
     } else if (type === 'Routine') {
-      routineSortable && this.refresh(routineSortable, 'Routine', day);
+      this.refresh(routineData, 'Routine', day);
     } else if (type === 'Todo') {
-      todoSortable && this.refresh(todoSortable, 'Todo', day);
+      this.refresh(todoData, 'Todo', day);
     }
-  }
-
-  private sortRoutine(items: Items): RoutineMetaData[] {
-    return Object.entries(items.Routine)
-      .sort(([, a], [, b]) => {
-        const aTime = a.time.replace(':', '');
-        const bTime = b.time.replace(':', '');
-        if (aTime > bTime) {
-          return 1;
-        } else {
-          return -1;
-        }
-      })
-      .map((value) => value[1]);
-  }
-
-  private sortTodo(items: Items, day: DayType): TodoMetaData[] {
-    return Object.entries(items.Todo[day])
-      .sort(([, a], [, b]) => {
-        const aTime = a.time.replace(':', '');
-        const bTime = b.time.replace(':', '');
-        if (aTime > bTime) {
-          return 1;
-        } else {
-          return -1;
-        }
-      })
-      .map((value) => value[1]);
   }
 
   refresh(

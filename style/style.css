@@ -518,6 +518,7 @@ body.dark {
 
 .addIcon {
   font-size: 18px;
+  pointer-events: none;
   border-radius: 50%;
   color: var(--color-darkgreen);
   transition: transform 0.2s;

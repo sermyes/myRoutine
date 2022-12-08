@@ -15,7 +15,7 @@ class PageItemComponent extends BaseComponent {
         this.element.dataset.day = this.day;
         const viewOption = new ViewOptionComponent();
         viewOption.setOnSortedItemsListener((type) => {
-            this.sortedItems(type);
+            this.items && this.updateItems(this.items, type);
         });
         viewOption.attatchTo(this.element, 'afterbegin');
         const itemsContainer = this.element.querySelector('.items__container');
@@ -32,6 +32,9 @@ class PageItemComponent extends BaseComponent {
         this.weeklyItems = new WeeklyItemsComponent();
         this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
         const addButton = new AddButtonComponent(this.day);
+        addButton.setOnBindDialogListener((type) => {
+            this.onBindDialogListener && this.onBindDialogListener(type, this.day);
+        });
         addButton.attatchTo(this.element, 'beforeend');
     }
     onActive(activedDay) {
@@ -40,26 +43,48 @@ class PageItemComponent extends BaseComponent {
             this.element.classList.add('active');
         }
     }
-    getActived() {
-        if (this.element.matches('.active')) {
-            return this.element;
-        }
-        else {
-            return null;
-        }
-    }
-    sortedItems(type) {
-        this.dailyItems.updateItems(this.items, this.day, type);
-    }
-    updateItems(items) {
+    updateItems(items, type = 'All') {
         this.items = items;
-        this.dailyItems.updateItems(this.items, this.day, 'All');
+        const routineData = this.sortRoutine(this.items);
+        const todoData = this.sortTodo(this.items, this.day);
+        this.dailyItems.updateItems(routineData, todoData, this.day, type);
+    }
+    sortRoutine(items) {
+        return Object.entries(items.Routine)
+            .sort(([, a], [, b]) => {
+            const aTime = a.time.replace(':', '');
+            const bTime = b.time.replace(':', '');
+            if (aTime > bTime) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        })
+            .map((value) => value[1]);
+    }
+    sortTodo(items, day) {
+        return Object.entries(items.Todo[day])
+            .sort(([, a], [, b]) => {
+            const aTime = a.time.replace(':', '');
+            const bTime = b.time.replace(':', '');
+            if (aTime > bTime) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        })
+            .map((value) => value[1]);
     }
     setOnRemoveItemListener(listener) {
         this.onRemoveItemListener = listener;
     }
     setOnStateChangeListener(listener) {
         this.onStateChangeListener = listener;
+    }
+    setOnBindDialogListener(listener) {
+        this.onBindDialogListener = listener;
     }
 }
 export class PageComponent extends BaseComponent {
@@ -82,6 +107,9 @@ export class PageComponent extends BaseComponent {
                 this.onStateChangeListener &&
                     this.onStateChangeListener(id, type, day, state);
             });
+            page.setOnBindDialogListener((type, day) => {
+                this.onBindDialogListener && this.onBindDialogListener(type, day);
+            });
             page.attatchTo(parent);
             this.children.push(page);
         }
@@ -101,20 +129,13 @@ export class PageComponent extends BaseComponent {
             page.updateItems(this.items);
         });
     }
-    getActivedPage() {
-        let activedPage;
-        this.children.forEach((page) => {
-            const element = page.getActived();
-            if (element) {
-                activedPage = element;
-            }
-        });
-        return activedPage;
-    }
     setOnRemoveItemListener(listener) {
         this.onRemoveItemListener = listener;
     }
     setOnStateChangeListener(listener) {
         this.onStateChangeListener = listener;
+    }
+    setOnBindDialogListener(listener) {
+        this.onBindDialogListener = listener;
     }
 }

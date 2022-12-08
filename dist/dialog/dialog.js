@@ -62,6 +62,8 @@ export class Dialog extends BaseComponent {
                 return;
             }
             this.onAddListener && this.onAddListener();
+            time.value = '';
+            title.value = '';
         });
     }
     addActive(error) {

@@ -3,7 +3,13 @@ import { FilterType, ViewOptionComponent } from './viewOption/viewOption.js';
 import { AddButtonComponent } from './addButton/addbutton.js';
 import { DailyItemsComponent } from './items/daily.js';
 import { WeeklyItemsComponent } from './items/weekly.js';
-import { DataType, Items, StateType } from '../../presenter.js';
+import {
+  DataType,
+  Items,
+  StateType,
+  RoutineMetaData,
+  TodoMetaData
+} from '../../presenter.js';
 
 type ChangeListener = DayType;
 type OnRemoveItemListener = (id: string, type: DataType, day: DayType) => void;
@@ -13,6 +19,7 @@ type OnStateChangeListener = (
   day: DayType,
   state: StateType
 ) => void;
+type OnBindDialogListener = (type: DataType, day: DayType) => void;
 interface Activable extends Component {
   onActive(activedDay: DayType): void;
 }
@@ -20,6 +27,7 @@ interface Activable extends Component {
 interface PageItemContainer extends Component {
   setOnRemoveItemListener(listener: OnRemoveItemListener): void;
   setOnStateChangeListener(listener: OnStateChangeListener): void;
+  setOnBindDialogListener(listener: OnBindDialogListener): void;
 }
 
 interface PageContainer extends Component, Activable, PageItemContainer {
@@ -35,6 +43,7 @@ class PageItemComponent
   private weeklyItems: WeeklyItemsComponent;
   private onRemoveItemListener?: OnRemoveItemListener;
   private onStateChangeListener?: OnStateChangeListener;
+  private onBindDialogListener?: OnBindDialogListener;
   constructor(private day: DayType) {
     super(`
       <div class="content" data-day>
@@ -45,7 +54,7 @@ class PageItemComponent
     this.element.dataset.day = this.day;
     const viewOption = new ViewOptionComponent();
     viewOption.setOnSortedItemsListener((type) => {
-      this.sortedItems(type);
+      this.items && this.updateItems(this.items! as Items, type);
     });
     viewOption.attatchTo(this.element, 'afterbegin');
 
@@ -75,6 +84,9 @@ class PageItemComponent
     this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
 
     const addButton = new AddButtonComponent(this.day);
+    addButton.setOnBindDialogListener((type: DataType) => {
+      this.onBindDialogListener && this.onBindDialogListener(type, this.day);
+    });
     addButton.attatchTo(this.element, 'beforeend');
   }
 
@@ -85,21 +97,39 @@ class PageItemComponent
     }
   }
 
-  getActived(): HTMLElement | null {
-    if (this.element.matches('.active')) {
-      return this.element;
-    } else {
-      return null;
-    }
-  }
-
-  sortedItems(type: FilterType) {
-    this.dailyItems.updateItems(this.items! as Items, this.day, type);
-  }
-
-  updateItems(items: Items) {
+  updateItems(items: Items, type: FilterType = 'All') {
     this.items = items;
-    this.dailyItems.updateItems(this.items, this.day, 'All');
+    const routineData = this.sortRoutine(this.items);
+    const todoData = this.sortTodo(this.items, this.day);
+    this.dailyItems.updateItems(routineData, todoData, this.day, type);
+  }
+
+  private sortRoutine(items: Items): RoutineMetaData[] {
+    return Object.entries(items.Routine)
+      .sort(([, a], [, b]) => {
+        const aTime = a.time.replace(':', '');
+        const bTime = b.time.replace(':', '');
+        if (aTime > bTime) {
+          return 1;
+        } else {
+          return -1;
+        }
+      })
+      .map((value) => value[1]);
+  }
+
+  private sortTodo(items: Items, day: DayType): TodoMetaData[] {
+    return Object.entries(items.Todo[day])
+      .sort(([, a], [, b]) => {
+        const aTime = a.time.replace(':', '');
+        const bTime = b.time.replace(':', '');
+        if (aTime > bTime) {
+          return 1;
+        } else {
+          return -1;
+        }
+      })
+      .map((value) => value[1]);
   }
 
   setOnRemoveItemListener(listener: OnRemoveItemListener) {
@@ -108,6 +138,10 @@ class PageItemComponent
 
   setOnStateChangeListener(listener: OnStateChangeListener) {
     this.onStateChangeListener = listener;
+  }
+
+  setOnBindDialogListener(listener: OnBindDialogListener) {
+    this.onBindDialogListener = listener;
   }
 }
 
@@ -120,6 +154,7 @@ export class PageComponent
   private items?: Items;
   private onRemoveItemListener?: OnRemoveItemListener;
   private onStateChangeListener?: OnStateChangeListener;
+  private onBindDialogListener?: OnBindDialogListener;
   constructor(private activedDay: DayType) {
     super(`
       <section class="contents">
@@ -138,6 +173,9 @@ export class PageComponent
       page.setOnStateChangeListener((id, type, day, state) => {
         this.onStateChangeListener &&
           this.onStateChangeListener(id, type, day, state);
+      });
+      page.setOnBindDialogListener((type, day) => {
+        this.onBindDialogListener && this.onBindDialogListener(type, day);
       });
       page.attatchTo(parent);
       this.children.push(page);
@@ -163,22 +201,15 @@ export class PageComponent
     });
   }
 
-  getActivedPage(): HTMLElement {
-    let activedPage: HTMLElement;
-    this.children.forEach((page) => {
-      const element = page.getActived();
-      if (element) {
-        activedPage = element;
-      }
-    });
-    return activedPage! as HTMLElement;
-  }
-
   setOnRemoveItemListener(listener: OnRemoveItemListener) {
     this.onRemoveItemListener = listener;
   }
 
   setOnStateChangeListener(listener: OnStateChangeListener) {
     this.onStateChangeListener = listener;
+  }
+
+  setOnBindDialogListener(listener: OnBindDialogListener) {
+    this.onBindDialogListener = listener;
   }
 }

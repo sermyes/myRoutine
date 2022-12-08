@@ -72,6 +72,8 @@ export class Dialog
       }
 
       this.onAddListener && this.onAddListener();
+      time.value = '';
+      title.value = '';
     });
   }
 

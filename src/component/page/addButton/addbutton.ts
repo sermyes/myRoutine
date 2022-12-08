@@ -1,10 +1,24 @@
+import { DataType } from '../../../presenter.js';
 import { BaseComponent, DayType } from '../../component.js';
 import { Modal } from './../../modal/modal.js';
 
 type RemoveItemMenuListener = () => void;
+type OnBindDialogListener = (type: DataType) => void;
 
-class AddItemMenuComponent extends BaseComponent<HTMLElement> {
+interface ItemMenuContainer extends addButtonContainer {
+  setRemoveItemMenuListener(listener: RemoveItemMenuListener): void;
+}
+
+export interface addButtonContainer {
+  setOnBindDialogListener(listener: OnBindDialogListener): void;
+}
+
+export class AddItemMenuComponent
+  extends BaseComponent<HTMLElement>
+  implements ItemMenuContainer
+{
   private removeItemMenuListener?: RemoveItemMenuListener;
+  private onBindDialogListener?: OnBindDialogListener;
   constructor(private day: DayType) {
     super(`
       <ul class="addMenu">
@@ -24,17 +38,30 @@ class AddItemMenuComponent extends BaseComponent<HTMLElement> {
     `);
 
     this.element.dataset.day = this.day;
-    this.element.addEventListener('click', () => {
+    this.element.addEventListener('click', (e) => {
+      const textElement = (e.target! as HTMLElement).querySelector(
+        '.addText'
+      )! as HTMLSpanElement;
       this.removeItemMenuListener && this.removeItemMenuListener();
+      this.onBindDialogListener &&
+        this.onBindDialogListener(textElement.innerText! as DataType);
     });
   }
 
   setRemoveItemMenuListener(listener: RemoveItemMenuListener) {
     this.removeItemMenuListener = listener;
   }
+
+  setOnBindDialogListener(listener: OnBindDialogListener) {
+    this.onBindDialogListener = listener;
+  }
 }
 
-export class AddButtonComponent extends BaseComponent<HTMLElement> {
+export class AddButtonComponent
+  extends BaseComponent<HTMLElement>
+  implements addButtonContainer
+{
+  private onBindDialogListener?: OnBindDialogListener;
   constructor(private day: DayType) {
     super(`
 			<div class="content__footer">
@@ -57,11 +84,18 @@ export class AddButtonComponent extends BaseComponent<HTMLElement> {
         this.removeItemMenu(addIco, modal, addItemMenu, addBtn);
       } else {
         this.addItemMenu(addIco, modal, addItemMenu, addBtn);
+        addItemMenu.setOnBindDialogListener((type: DataType) => {
+          this.onBindDialogListener && this.onBindDialogListener(type);
+        });
         addItemMenu.setRemoveItemMenuListener(() => {
           this.removeItemMenu(addIco, modal, addItemMenu, addBtn);
         });
       }
     });
+  }
+
+  setOnBindDialogListener(listener: OnBindDialogListener) {
+    this.onBindDialogListener = listener;
   }
 
   private removeItemMenu(

@@ -1,6 +1,6 @@
 import { BaseComponent } from '../../component.js';
 import { Modal } from './../../modal/modal.js';
-class AddItemMenuComponent extends BaseComponent {
+export class AddItemMenuComponent extends BaseComponent {
     constructor(day) {
         super(`
       <ul class="addMenu">
@@ -20,12 +20,18 @@ class AddItemMenuComponent extends BaseComponent {
     `);
         this.day = day;
         this.element.dataset.day = this.day;
-        this.element.addEventListener('click', () => {
+        this.element.addEventListener('click', (e) => {
+            const textElement = e.target.querySelector('.addText');
             this.removeItemMenuListener && this.removeItemMenuListener();
+            this.onBindDialogListener &&
+                this.onBindDialogListener(textElement.innerText);
         });
     }
     setRemoveItemMenuListener(listener) {
         this.removeItemMenuListener = listener;
+    }
+    setOnBindDialogListener(listener) {
+        this.onBindDialogListener = listener;
     }
 }
 export class AddButtonComponent extends BaseComponent {
@@ -51,11 +57,17 @@ export class AddButtonComponent extends BaseComponent {
             }
             else {
                 this.addItemMenu(addIco, modal, addItemMenu, addBtn);
+                addItemMenu.setOnBindDialogListener((type) => {
+                    this.onBindDialogListener && this.onBindDialogListener(type);
+                });
                 addItemMenu.setRemoveItemMenuListener(() => {
                     this.removeItemMenu(addIco, modal, addItemMenu, addBtn);
                 });
             }
         });
+    }
+    setOnBindDialogListener(listener) {
+        this.onBindDialogListener = listener;
     }
     removeItemMenu(addIco, modal, addItemMenu, addBtn) {
         addIco.classList.remove('rotate');
