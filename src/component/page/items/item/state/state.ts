@@ -1,6 +1,7 @@
-import { StateType } from '../../../../presenter.js';
-import { BaseComponent } from '../../../component.js';
-import { Component } from './../../../component.js';
+import { StateType } from '../../../../../presenter.js';
+import { BaseComponent } from '../../../../component.js';
+import { Component } from '../../../../component.js';
+import { Modal } from './../../../../modal/modal.js';
 
 type OnStateChangeListener = (state: StateType) => void;
 interface StateContainer extends Component {
@@ -58,7 +59,7 @@ export class StateContainerComponent
 				</div>
 			</div>
 		`);
-
+    const modal = new Modal();
     const stateBtn = this.element.querySelector('.stateBtn')! as HTMLElement;
     if (state === 'completion') {
       stateBtn.innerHTML = `<i class="fas fa-check"></i>`;
@@ -73,9 +74,11 @@ export class StateContainerComponent
 
     this.element.addEventListener('click', () => {
       if (this.element.matches('.active')) {
+        modal.removeFrom(this.element);
         this.element.classList.remove('active');
         stateMenu.removeFrom(this.element);
       } else {
+        modal.attatchTo(this.element);
         this.element.classList.add('active');
         stateMenu.attatchTo(this.element);
       }

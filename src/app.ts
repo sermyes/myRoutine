@@ -55,10 +55,7 @@ class App {
     });
     this.page.attatchTo(this.pageContainer);
     this.bindDaysToPage(this.page);
-
     this.page.updateItems(this.items);
-
-    // weekly => routine만 보여주고 state변경 + filterMenu(visibility hidden)
   }
 
   private bindDaysToPage(page: PageComponent) {

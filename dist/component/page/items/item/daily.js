@@ -1,12 +1,12 @@
-import { BaseComponent } from '../../component.js';
-import { StateContainerComponent } from './item/state/state.js';
+import { BaseComponent } from '../../../component.js';
+import { StateContainerComponent } from './state/state.js';
 class DailyItemComponent extends BaseComponent {
     constructor(item, type, day) {
         super(`
-			<li class="item" data-id="">
+			<li class="daily_item" data-id="">
 				<span class="time"></span>
 				<span class="title"></span>
-				<div class="state"></div>
+				<div class="daily_state"></div>
 				<button class="deleteBtn">
 					<i class="fas fa-trash-alt"></i>
 				</button>
@@ -37,11 +37,11 @@ class DailyItemComponent extends BaseComponent {
         const state = this.type === 'Todo'
             ? this.item.state
             : this.item.state[this.day];
-        const stateElement = this.element.querySelector('.state');
+        const stateElement = this.element.querySelector('.daily_state');
         const stateContainer = new StateContainerComponent(state);
         stateContainer.setOnStateChangeListener((state) => {
             this.onStateChangeListener &&
-                this.onStateChangeListener(this.element.dataset.id, this.type, state);
+                this.onStateChangeListener(this.element.dataset.id, this.type, state, this.day);
         });
         stateContainer.attatchTo(stateElement);
     }
@@ -88,9 +88,9 @@ export class DailyItemsComponent extends BaseComponent {
             itemComponent.setOnRemoveItemListener((id, type) => {
                 this.onRemoveItemListener && this.onRemoveItemListener(id, type);
             });
-            itemComponent.setOnStateChangeListener((id, type, state) => {
+            itemComponent.setOnStateChangeListener((id, type, state, day) => {
                 this.onStateChangeListener &&
-                    this.onStateChangeListener(id, type, state);
+                    this.onStateChangeListener(id, type, state, day);
             });
             itemComponent.attatchTo(this.element, 'beforeend');
         });

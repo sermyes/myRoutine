@@ -26,4 +26,12 @@ export class WeeklyItemsComponent extends BaseComponent {
         const item = new ItemComponent();
         item.attatchTo(this.element, 'beforeend');
     }
+    onActive(type) {
+        if (type === 'weekly') {
+            this.element.classList.add('active');
+        }
+        else {
+            this.element.classList.remove('active');
+        }
+    }
 }

@@ -1,10 +1,17 @@
-import { BaseComponent } from '../../component.js';
+import { BaseComponent, Component } from '../../component.js';
 import { Modal } from './../../modal/modal.js';
 
 type OnSortedItemsListener = (type: FilterType) => void;
+type OnViewItemConatinerListener = (type: ViewType) => void;
+export type ViewType = 'weekly' | 'daily';
 export type FilterType = 'All' | 'Routine' | 'Todo';
-interface FilterContainer {
+interface FilterContainer extends Component {
   setOnSortedItemsListener(listener: OnSortedItemsListener): void;
+}
+
+export interface ViewContainer extends FilterContainer {
+  setOnViewItemContainerListener(listener: OnViewItemConatinerListener): void;
+  initViewOption(): void;
 }
 
 class FilterMenuComponent
@@ -41,11 +48,12 @@ class FilterMenuComponent
 
 export class ViewOptionComponent
   extends BaseComponent<HTMLElement>
-  implements FilterContainer
+  implements ViewContainer
 {
   private onSortedItemsListener?: OnSortedItemsListener;
   private modal: Modal;
   private filterMenu: FilterMenuComponent;
+  private onViewItemConatinerListener?: OnViewItemConatinerListener;
   constructor() {
     super(`
 			<div class="content__header">
@@ -78,10 +86,10 @@ export class ViewOptionComponent
   }
 
   private changeViewOption(): void {
-    const overlay = this.element.querySelector('.overlay')! as HTMLDivElement;
     const optionBtn = this.element.querySelector(
       '.view_option'
     )! as HTMLElement;
+    const overlay = this.element.querySelector('.overlay')! as HTMLDivElement;
     const weeklyBtn = this.element.querySelector(
       '.weeklyBtn'
     )! as HTMLButtonElement;
@@ -90,16 +98,36 @@ export class ViewOptionComponent
     )! as HTMLButtonElement;
     optionBtn.addEventListener('click', (e) => {
       const target = e.target! as HTMLElement;
+      let type: ViewType;
       if (target.matches('.weeklyBtn')) {
+        type = 'weekly';
         overlay.classList.add('right');
         weeklyBtn.classList.add('active');
         dailyBtn.classList.remove('active');
       } else {
+        type = 'daily';
         overlay.classList.remove('right');
         weeklyBtn.classList.remove('active');
         dailyBtn.classList.add('active');
       }
+      this.onViewItemConatinerListener &&
+        this.onViewItemConatinerListener(type);
     });
+  }
+
+  initViewOption() {
+    const overlay = this.element.querySelector('.overlay')! as HTMLDivElement;
+    const weeklyBtn = this.element.querySelector(
+      '.weeklyBtn'
+    )! as HTMLButtonElement;
+    const dailyBtn = this.element.querySelector(
+      '.dailyBtn'
+    )! as HTMLButtonElement;
+    overlay.classList.remove('right');
+    weeklyBtn.classList.remove('active');
+    dailyBtn.classList.add('active');
+    this.onViewItemConatinerListener &&
+      this.onViewItemConatinerListener('daily');
   }
 
   private onFilterMenu() {
@@ -120,6 +148,10 @@ export class ViewOptionComponent
         this.filterMenu.attatchTo(filterContainer);
       }
     });
+  }
+
+  setOnViewItemContainerListener(listener: OnViewItemConatinerListener) {
+    this.onViewItemConatinerListener = listener;
   }
 
   setOnSortedItemsListener(listener: OnSortedItemsListener): void {

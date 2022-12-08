@@ -1,8 +1,8 @@
 import { BaseComponent, Days } from './../component.js';
 import { ViewOptionComponent } from './viewOption/viewOption.js';
 import { AddButtonComponent } from './addButton/addbutton.js';
-import { DailyItemsComponent } from './items/daily.js';
-import { WeeklyItemsComponent } from './items/weekly.js';
+import { DailyItemsComponent } from './items/item/daily.js';
+import { WeeklyItemsComponent } from './items/item/weekly.js';
 class PageItemComponent extends BaseComponent {
     constructor(day) {
         super(`
@@ -13,24 +13,31 @@ class PageItemComponent extends BaseComponent {
     `);
         this.day = day;
         this.element.dataset.day = this.day;
-        const viewOption = new ViewOptionComponent();
-        viewOption.setOnSortedItemsListener((type) => {
+        this.viewOption = new ViewOptionComponent();
+        this.dailyItems = new DailyItemsComponent();
+        this.weeklyItems = new WeeklyItemsComponent();
+        this.viewOption.setOnSortedItemsListener((type) => {
             this.items && this.updateItems(this.items, type);
         });
-        viewOption.attatchTo(this.element, 'afterbegin');
-        const itemsContainer = this.element.querySelector('.items__container');
-        this.dailyItems = new DailyItemsComponent();
-        this.dailyItems.setOnRemoveItemListener((id, type) => {
-            this.onRemoveItemListener &&
-                this.onRemoveItemListener(id, type, this.element.dataset.day);
+        this.viewOption.setOnViewItemContainerListener((type) => {
+            this.dailyItems.onActive(type);
+            this.weeklyItems.onActive(type);
         });
-        this.dailyItems.setOnStateChangeListener((id, type, state) => {
+        this.viewOption.attatchTo(this.element, 'afterbegin');
+        const itemsContainer = this.element.querySelector('.items__container');
+        this.dailyItems.setOnRemoveItemListener((id, type) => {
+            this.onRemoveItemListener && this.onRemoveItemListener(id, type, day);
+        });
+        this.dailyItems.setOnStateChangeListener((id, type, state, day) => {
             this.onStateChangeListener &&
-                this.onStateChangeListener(id, type, this.element.dataset.day, state);
+                this.onStateChangeListener(id, type, day, state);
+        });
+        this.weeklyItems.setOnStateChangeListener((id, type, state, day) => {
+            this.onStateChangeListener &&
+                this.onStateChangeListener(id, type, day, state);
         });
         this.dailyItems.attatchTo(itemsContainer);
-        this.weeklyItems = new WeeklyItemsComponent();
-        this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
+        this.weeklyItems.attatchTo(itemsContainer);
         const addButton = new AddButtonComponent(this.day);
         addButton.setOnBindDialogListener((type) => {
             this.onBindDialogListener && this.onBindDialogListener(type, this.day);
@@ -39,6 +46,7 @@ class PageItemComponent extends BaseComponent {
     }
     onActive(activedDay) {
         this.element.classList.remove('active');
+        this.viewOption.initViewOption();
         if (this.element.dataset.day === activedDay) {
             this.element.classList.add('active');
         }
@@ -48,6 +56,7 @@ class PageItemComponent extends BaseComponent {
         const routineData = this.sortRoutine(this.items);
         const todoData = this.sortTodo(this.items, this.day);
         this.dailyItems.updateItems(routineData, todoData, this.day, type);
+        this.weeklyItems.updateItems(routineData, todoData, this.day, type);
     }
     sortRoutine(items) {
         return Object.entries(items.Routine)
@@ -85,6 +94,9 @@ class PageItemComponent extends BaseComponent {
     }
     setOnBindDialogListener(listener) {
         this.onBindDialogListener = listener;
+    }
+    getActive() {
+        return this.element.matches('.active');
     }
 }
 export class PageComponent extends BaseComponent {

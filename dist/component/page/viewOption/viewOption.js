@@ -55,23 +55,38 @@ export class ViewOptionComponent extends BaseComponent {
         this.changeViewOption();
     }
     changeViewOption() {
-        const overlay = this.element.querySelector('.overlay');
         const optionBtn = this.element.querySelector('.view_option');
+        const overlay = this.element.querySelector('.overlay');
         const weeklyBtn = this.element.querySelector('.weeklyBtn');
         const dailyBtn = this.element.querySelector('.dailyBtn');
         optionBtn.addEventListener('click', (e) => {
             const target = e.target;
+            let type;
             if (target.matches('.weeklyBtn')) {
+                type = 'weekly';
                 overlay.classList.add('right');
                 weeklyBtn.classList.add('active');
                 dailyBtn.classList.remove('active');
             }
             else {
+                type = 'daily';
                 overlay.classList.remove('right');
                 weeklyBtn.classList.remove('active');
                 dailyBtn.classList.add('active');
             }
+            this.onViewItemConatinerListener &&
+                this.onViewItemConatinerListener(type);
         });
+    }
+    initViewOption() {
+        const overlay = this.element.querySelector('.overlay');
+        const weeklyBtn = this.element.querySelector('.weeklyBtn');
+        const dailyBtn = this.element.querySelector('.dailyBtn');
+        overlay.classList.remove('right');
+        weeklyBtn.classList.remove('active');
+        dailyBtn.classList.add('active');
+        this.onViewItemConatinerListener &&
+            this.onViewItemConatinerListener('daily');
     }
     onFilterMenu() {
         const filterContainer = this.element.querySelector('.filter_container');
@@ -88,6 +103,9 @@ export class ViewOptionComponent extends BaseComponent {
                 this.filterMenu.attatchTo(filterContainer);
             }
         });
+    }
+    setOnViewItemContainerListener(listener) {
+        this.onViewItemConatinerListener = listener;
     }
     setOnSortedItemsListener(listener) {
         this.onSortedItemsListener = (type) => {

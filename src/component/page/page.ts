@@ -1,8 +1,12 @@
 import { BaseComponent, Component, DayType, Days } from './../component.js';
-import { FilterType, ViewOptionComponent } from './viewOption/viewOption.js';
+import {
+  FilterType,
+  ViewOptionComponent,
+  ViewContainer
+} from './viewOption/viewOption.js';
 import { AddButtonComponent } from './addButton/addbutton.js';
-import { DailyItemsComponent } from './items/daily.js';
-import { WeeklyItemsComponent } from './items/weekly.js';
+import { DailyItemsComponent } from './items/item/daily.js';
+import { WeeklyItemsComponent } from './items/item/weekly.js';
 import {
   DataType,
   Items,
@@ -20,11 +24,11 @@ type OnStateChangeListener = (
   state: StateType
 ) => void;
 type OnBindDialogListener = (type: DataType, day: DayType) => void;
-interface Activable extends Component {
+export interface Activable extends Component {
   onActive(activedDay: DayType): void;
 }
 
-interface PageItemContainer extends Component {
+export interface PageItemContainer extends Component {
   setOnRemoveItemListener(listener: OnRemoveItemListener): void;
   setOnStateChangeListener(listener: OnStateChangeListener): void;
   setOnBindDialogListener(listener: OnBindDialogListener): void;
@@ -41,6 +45,7 @@ class PageItemComponent
   private items?: Items;
   private dailyItems: DailyItemsComponent;
   private weeklyItems: WeeklyItemsComponent;
+  private viewOption: ViewContainer;
   private onRemoveItemListener?: OnRemoveItemListener;
   private onStateChangeListener?: OnStateChangeListener;
   private onBindDialogListener?: OnBindDialogListener;
@@ -52,36 +57,38 @@ class PageItemComponent
       </div>
     `);
     this.element.dataset.day = this.day;
-    const viewOption = new ViewOptionComponent();
-    viewOption.setOnSortedItemsListener((type) => {
+    this.viewOption = new ViewOptionComponent();
+    this.dailyItems = new DailyItemsComponent();
+    this.weeklyItems = new WeeklyItemsComponent();
+
+    this.viewOption.setOnSortedItemsListener((type) => {
       this.items && this.updateItems(this.items! as Items, type);
     });
-    viewOption.attatchTo(this.element, 'afterbegin');
+    this.viewOption.setOnViewItemContainerListener((type) => {
+      this.dailyItems.onActive(type);
+      this.weeklyItems.onActive(type);
+    });
+    this.viewOption.attatchTo(this.element, 'afterbegin');
 
     const itemsContainer = this.element.querySelector(
       '.items__container'
     )! as HTMLElement;
-    this.dailyItems = new DailyItemsComponent();
+
     this.dailyItems.setOnRemoveItemListener((id, type) => {
-      this.onRemoveItemListener &&
-        this.onRemoveItemListener(
-          id,
-          type,
-          this.element.dataset.day! as DayType
-        );
+      this.onRemoveItemListener && this.onRemoveItemListener(id, type, day);
     });
-    this.dailyItems.setOnStateChangeListener((id, type, state) => {
+    this.dailyItems.setOnStateChangeListener((id, type, state, day) => {
       this.onStateChangeListener &&
-        this.onStateChangeListener(
-          id,
-          type,
-          this.element.dataset.day! as DayType,
-          state
-        );
+        this.onStateChangeListener(id, type, day, state);
     });
+
+    this.weeklyItems.setOnStateChangeListener((id, type, state, day) => {
+      this.onStateChangeListener &&
+        this.onStateChangeListener(id, type, day, state);
+    });
+
     this.dailyItems.attatchTo(itemsContainer);
-    this.weeklyItems = new WeeklyItemsComponent();
-    this.weeklyItems.attatchTo(itemsContainer, 'beforeend');
+    this.weeklyItems.attatchTo(itemsContainer);
 
     const addButton = new AddButtonComponent(this.day);
     addButton.setOnBindDialogListener((type: DataType) => {
@@ -92,6 +99,7 @@ class PageItemComponent
 
   onActive(activedDay: DayType): void {
     this.element.classList.remove('active');
+    this.viewOption.initViewOption();
     if (this.element.dataset.day === activedDay) {
       this.element.classList.add('active');
     }
@@ -102,6 +110,7 @@ class PageItemComponent
     const routineData = this.sortRoutine(this.items);
     const todoData = this.sortTodo(this.items, this.day);
     this.dailyItems.updateItems(routineData, todoData, this.day, type);
+    this.weeklyItems.updateItems(routineData, todoData, this.day, type);
   }
 
   private sortRoutine(items: Items): RoutineMetaData[] {
@@ -142,6 +151,10 @@ class PageItemComponent
 
   setOnBindDialogListener(listener: OnBindDialogListener) {
     this.onBindDialogListener = listener;
+  }
+
+  getActive() {
+    return this.element.matches('.active');
   }
 }
 

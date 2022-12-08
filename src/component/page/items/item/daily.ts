@@ -4,35 +4,22 @@ import {
   RoutineState,
   StateType,
   TodoMetaData
-} from '../../../presenter.js';
-import { BaseComponent, Component, DayType } from '../../component.js';
-import { FilterType } from '../viewOption/viewOption.js';
+} from '../../../../presenter.js';
+import { BaseComponent, DayType } from '../../../component.js';
+import { FilterType, ViewType } from '../../viewOption/viewOption.js';
+import { ItemContainer, OnStateChangeListener } from '../items.js';
 import { StateContainerComponent } from './state/state.js';
+import { ItemsContainer } from './../items';
 
 type OnRemoveItemListener = (id: string, type: DataType) => void;
-type OnStateChangeListener = (
-  id: string,
-  type: DataType,
-  state: StateType
-) => void;
-interface ItemContainer extends Component {
+
+interface DailyItemContainer extends ItemContainer {
   setOnRemoveItemListener(listener: OnRemoveItemListener): void;
-  setOnStateChangeListener(listener: OnStateChangeListener): void;
 }
 
-export interface ItemsContainer extends Component, ItemContainer {
-  updateItems(
-    routineData: RoutineMetaData[],
-    todoData: TodoMetaData[],
-    day: DayType,
-    type: FilterType
-  ): void;
-  refresh(items: RoutineMetaData[], type: DataType, day: DayType): void;
-}
-
-class ItemComponent
+class DailyItemComponent
   extends BaseComponent<HTMLElement>
-  implements ItemContainer
+  implements DailyItemContainer
 {
   private onRemoveItemListener?: OnRemoveItemListener;
   private onStateChangeListener?: OnStateChangeListener;
@@ -42,10 +29,10 @@ class ItemComponent
     private day: DayType
   ) {
     super(`
-			<li class="item" data-id="">
+			<li class="daily_item" data-id="">
 				<span class="time"></span>
 				<span class="title"></span>
-				<div class="state"></div>
+				<div class="daily_state"></div>
 				<button class="deleteBtn">
 					<i class="fas fa-trash-alt"></i>
 				</button>
@@ -81,14 +68,17 @@ class ItemComponent
       this.type === 'Todo'
         ? this.item.state
         : (this.item.state! as RoutineState)[this.day];
-    const stateElement = this.element.querySelector('.state')! as HTMLElement;
+    const stateElement = this.element.querySelector(
+      '.daily_state'
+    )! as HTMLElement;
     const stateContainer = new StateContainerComponent(state! as StateType);
     stateContainer.setOnStateChangeListener((state) => {
       this.onStateChangeListener &&
         this.onStateChangeListener(
           this.element.dataset.id! as string,
           this.type,
-          state
+          state,
+          this.day
         );
     });
     stateContainer.attatchTo(stateElement);
@@ -115,13 +105,13 @@ class ItemComponent
 
 export class DailyItemsComponent
   extends BaseComponent<HTMLElement>
-  implements ItemsContainer
+  implements ItemsContainer, DailyItemContainer
 {
   private onRemoveItemListener?: OnRemoveItemListener;
   private onStateChangeListener?: OnStateChangeListener;
   constructor() {
     super(`
-			<ul class="daily__items">
+			<ul class="daily__items active">
 			</ul>
 		`);
   }
@@ -149,16 +139,24 @@ export class DailyItemsComponent
     day: DayType
   ) {
     items.forEach((item) => {
-      const itemComponent = new ItemComponent(item, type, day);
+      const itemComponent = new DailyItemComponent(item, type, day);
       itemComponent.setOnRemoveItemListener((id, type) => {
         this.onRemoveItemListener && this.onRemoveItemListener(id, type);
       });
-      itemComponent.setOnStateChangeListener((id, type, state) => {
+      itemComponent.setOnStateChangeListener((id, type, state, day) => {
         this.onStateChangeListener &&
-          this.onStateChangeListener(id, type, state);
+          this.onStateChangeListener(id, type, state, day);
       });
       itemComponent.attatchTo(this.element, 'beforeend');
     });
+  }
+
+  onActive(type: ViewType) {
+    if (type === 'daily') {
+      this.element.classList.add('active');
+    } else {
+      this.element.classList.remove('active');
+    }
   }
 
   setOnRemoveItemListener(listener: OnRemoveItemListener) {
