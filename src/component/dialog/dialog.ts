@@ -1,5 +1,4 @@
-import { BaseComponent } from '../component.js';
-import { Component } from '../component.js';
+import { BaseComponent, Component } from '../component.js';
 
 type DataType = 'Routine' | 'Todo';
 type OnCloseListener = () => void;

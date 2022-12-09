@@ -7,9 +7,8 @@ import {
 } from '../../../../presenter.js';
 import { BaseComponent, DayType } from '../../../component.js';
 import { FilterType, ViewType } from '../../viewOption/viewOption.js';
-import { ItemImpl, OnStateChangeListener } from '../items.js';
+import { ItemImpl, OnStateChangeListener, ItemsContainer } from '../items.js';
 import { StateContainerComponent } from './state/state.js';
-import { ItemsContainer } from './../items';
 
 type OnRemoveItemListener = (id: string, type: DataType) => void;
 

@@ -4,9 +4,8 @@ import {
   StateType,
   TodoMetaData
 } from '../../../presenter.js';
-import { DayType } from '../../component.js';
+import { DayType, Component } from '../../component.js';
 import { FilterType, ViewType } from '../viewOption/viewOption.js';
-import { Component } from './../../component';
 
 export type OnStateChangeListener = (
   id: string,
