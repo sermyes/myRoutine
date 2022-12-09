@@ -5,17 +5,17 @@ import { Modal } from './../../modal/modal.js';
 type RemoveItemMenuListener = () => void;
 type OnBindDialogListener = (type: DataType) => void;
 
-interface ItemMenuContainer extends addButtonContainer {
+interface ItemMenuImpl extends addButtonImpl {
   setRemoveItemMenuListener(listener: RemoveItemMenuListener): void;
 }
 
-export interface addButtonContainer {
+export interface addButtonImpl {
   setOnBindDialogListener(listener: OnBindDialogListener): void;
 }
 
 export class AddItemMenuComponent
   extends BaseComponent<HTMLElement>
-  implements ItemMenuContainer
+  implements ItemMenuImpl
 {
   private removeItemMenuListener?: RemoveItemMenuListener;
   private onBindDialogListener?: OnBindDialogListener;
@@ -59,7 +59,7 @@ export class AddItemMenuComponent
 
 export class AddButtonComponent
   extends BaseComponent<HTMLElement>
-  implements addButtonContainer
+  implements addButtonImpl
 {
   private onBindDialogListener?: OnBindDialogListener;
   constructor(private day: DayType) {

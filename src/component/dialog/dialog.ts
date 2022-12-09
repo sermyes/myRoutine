@@ -1,18 +1,24 @@
-import { BaseComponent } from '../component/component.js';
-import { Component } from './../component/component.js';
+import { BaseComponent } from '../component.js';
+import { Component } from '../component.js';
 
 type DataType = 'Routine' | 'Todo';
 type OnCloseListener = () => void;
 type OnAddListener = () => void;
-interface DialogInputData extends Component {
+export interface DialogInputData extends Component {
   get title(): string;
   get time(): string;
   get type(): string;
 }
 
+export interface DialogContainer extends DialogInputData {
+  setOnCloseListener(listener: OnCloseListener): void;
+  setOnAddListener(listener: OnAddListener): void;
+  setType(type: DataType): void;
+}
+
 export class Dialog
   extends BaseComponent<HTMLElement>
-  implements DialogInputData
+  implements DialogContainer
 {
   private dataType: DataType;
   private onCloseListener?: OnCloseListener;
@@ -77,11 +83,11 @@ export class Dialog
     });
   }
 
-  addActive(error: HTMLElement) {
+  private addActive(error: HTMLElement) {
     error.classList.add('active');
   }
 
-  removeActive(error: HTMLElement) {
+  private removeActive(error: HTMLElement) {
     error.classList.remove('active');
   }
 

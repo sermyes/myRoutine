@@ -7,13 +7,13 @@ import {
 } from '../../../../presenter.js';
 import { BaseComponent, DayType } from '../../../component.js';
 import { FilterType, ViewType } from '../../viewOption/viewOption.js';
-import { ItemContainer, OnStateChangeListener } from '../items.js';
+import { ItemImpl, OnStateChangeListener } from '../items.js';
 import { StateContainerComponent } from './state/state.js';
 import { ItemsContainer } from './../items';
 
 class WeeklyItemComponent
   extends BaseComponent<HTMLElement>
-  implements ItemContainer
+  implements ItemImpl
 {
   private onStateChangeListener?: OnStateChangeListener;
   constructor(
@@ -28,7 +28,7 @@ class WeeklyItemComponent
 				</div>
 				<div>
 					<ul class="weekly_days">
-						<li class="weekly_day inactive" data-day="Mon">
+						<li class="weekly_day" data-day="Mon">
 							<span class="weekly_text">Mon</span>
 							<div class="weekly_state" data-day="Mon"></div>
 						</li>

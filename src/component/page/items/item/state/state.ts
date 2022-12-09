@@ -4,14 +4,11 @@ import { Component } from '../../../../component.js';
 import { Modal } from './../../../../modal/modal.js';
 
 type OnStateChangeListener = (state: StateType) => void;
-interface StateContainer extends Component {
+interface StateImpl extends Component {
   setOnStateChangeListener(listener: OnStateChangeListener): void;
 }
 
-class StateComponent
-  extends BaseComponent<HTMLElement>
-  implements StateContainer
-{
+class StateComponent extends BaseComponent<HTMLElement> implements StateImpl {
   private onStateChangeListener?: OnStateChangeListener;
   constructor() {
     super(`
@@ -49,7 +46,7 @@ class StateComponent
 
 export class StateContainerComponent
   extends BaseComponent<HTMLElement>
-  implements StateContainer
+  implements StateImpl
 {
   private onStateChangeListener?: OnStateChangeListener;
   constructor(state: StateType) {

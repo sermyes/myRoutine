@@ -15,11 +15,11 @@ export type OnStateChangeListener = (
   day: DayType
 ) => void;
 
-export interface ItemContainer extends Component {
+export interface ItemImpl extends Component {
   setOnStateChangeListener(listener: OnStateChangeListener): void;
 }
 
-export interface ItemsContainer extends ItemContainer {
+export interface ItemsContainer extends ItemImpl {
   updateItems(
     routineData: RoutineMetaData[],
     todoData: TodoMetaData[],

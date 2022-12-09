@@ -33,38 +33,32 @@ export class Presenter {
                         Sat: 'cancel',
                         Sun: 'cancel'
                     }
-                },
-                2: {
-                    id: 2,
-                    time: '19:00',
-                    title: 'test2',
-                    state: {
-                        Mon: 'cancel',
-                        Tue: 'cancel',
-                        Wed: 'cancel',
-                        Thu: 'cancel',
-                        Fri: 'cancel',
-                        Sat: 'cancel',
-                        Sun: 'cancel'
-                    }
                 }
             },
             Todo: {
                 Mon: {
                     3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
-                    4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' },
-                    5: { id: 5, time: '06:00', title: 'test5', state: 'cancel' }
+                    4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' }
                 },
                 Tue: {
-                    3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
-                    4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' },
-                    5: { id: 5, time: '12:00', title: 'test6', state: 'cancel' }
+                    5: { id: 5, time: '08:00', title: 'test3', state: 'cancel' },
+                    6: { id: 6, time: '05:00', title: 'test4', state: 'cancel' }
                 },
-                Wed: {},
-                Thu: {},
-                Fri: {},
-                Sat: {},
-                Sun: {}
+                Wed: {
+                    7: { id: 7, time: '05:00', title: 'test4', state: 'cancel' }
+                },
+                Thu: {
+                    8: { id: 8, time: '05:00', title: 'test4', state: 'cancel' }
+                },
+                Fri: {
+                    9: { id: 9, time: '05:00', title: 'test4', state: 'cancel' }
+                },
+                Sat: {
+                    10: { id: 10, time: '05:00', title: 'test4', state: 'cancel' }
+                },
+                Sun: {
+                    11: { id: 11, time: '05:00', title: 'test4', state: 'cancel' }
+                }
             }
         };
     }

@@ -2,19 +2,19 @@ import { BaseComponent, Component, DayType, Days } from '../component.js';
 
 type ClickListener = () => void;
 type ActiveState = 'active' | 'inactive';
-interface DaysContainer extends Component {
+interface DayItemContainer extends Component {
   setOnListener(listener: ClickListener): void;
   onActive(state: ActiveState): void;
   getActive(): DayType | null;
 }
 
-export interface Days {
+export interface DaysContainer extends Component {
   getActivedDay(): DayType;
 }
 
-class DaysItemComponent
+class DayItemComponent
   extends BaseComponent<HTMLElement>
-  implements DaysContainer
+  implements DayItemContainer
 {
   private onClickListener?: ClickListener;
   constructor(private state: ActiveState, private text: DayType) {
@@ -62,8 +62,11 @@ class DaysItemComponent
   }
 }
 
-export class DaysComponent extends BaseComponent<HTMLElement> implements Days {
-  private children: DaysItemComponent[] = [];
+export class DaysComponent
+  extends BaseComponent<HTMLElement>
+  implements DaysContainer
+{
+  private children: DayItemContainer[] = [];
   constructor(private today: number) {
     super(`
 			<ul class="days">
@@ -74,7 +77,7 @@ export class DaysComponent extends BaseComponent<HTMLElement> implements Days {
 
   private addDays = (parent: HTMLElement) => {
     for (let i = 1; i <= Days.length; i++) {
-      const item = new DaysItemComponent(
+      const item = new DayItemComponent(
         this.today === i % Days.length ? 'active' : 'inactive',
         Days[i % Days.length]! as DayType
       );

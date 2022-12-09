@@ -5,14 +5,11 @@
   --font-dongle: 'Dongle', sans-serif;
   --color-bg-dark: rgb(38, 38, 38);
   --color-bg-light: rgb(224, 224, 224);
-  --color-pg-dark: rgba(73, 73, 73, 0.6);
   --color-dark: rgb(73, 73, 73);
-  --color-pg-light: rgba(255, 255, 255, 0.6);
+  --color-title-light: rgba(255, 255, 255, 0.6);
   --color-light: rgb(224, 224, 224);
   --color-lightgrey: rgb(182, 180, 190);
   --color-grey: rgb(97, 97, 97);
-  --color-bg-accent-dark: #2d2d2d;
-  --color-bg-accent-light: #cacaca;
   --color-accent: #f64435;
   --color-yellow: rgb(250, 165, 85);
   --color-black: #000;
@@ -45,11 +42,6 @@ body {
   font-size: 1.5rem;
 }
 
-body.dark {
-  background: var(--color-bg-light) url('../assets/images/background_light.png')
-    no-repeat 0% 0% / 100vw 30vh;
-}
-
 .app {
   width: 100%;
   max-width: 1200px;
@@ -72,7 +64,7 @@ body.dark {
   font-family: var(--font-title);
   margin: 20px;
   letter-spacing: 0.1em;
-  color: var(--color-pg-light);
+  color: var(--color-title-light);
   font-size: 1.2em;
   width: 70%;
   margin: auto;
@@ -440,7 +432,7 @@ body.dark {
   position: absolute;
   background: var(--color-white);
   z-index: 10;
-  width: 225px;
+  min-width: 224px;
   right: 110%;
   display: flex;
   flex-direction: row;

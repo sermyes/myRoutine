@@ -24,23 +24,28 @@ type OnStateChangeListener = (
   state: StateType
 ) => void;
 type OnBindDialogListener = (type: DataType, day: DayType) => void;
-export interface Activable extends Component {
+interface Activable extends Component {
   onActive(activedDay: DayType): void;
 }
 
-export interface PageItemContainer extends Component {
+interface PageItemImpl extends Component {
   setOnRemoveItemListener(listener: OnRemoveItemListener): void;
   setOnStateChangeListener(listener: OnStateChangeListener): void;
   setOnBindDialogListener(listener: OnBindDialogListener): void;
 }
 
-interface PageContainer extends Component, Activable, PageItemContainer {
+interface PageItemContainer extends PageItemImpl, Activable {
+  updateItems(items: Items, type: FilterType): void;
+}
+
+export interface PageContainer extends PageItemImpl {
   setOnActiveChangeListener(listener: ChangeListener): void;
+  updateItems(items: Items): void;
 }
 
 class PageItemComponent
   extends BaseComponent<HTMLElement>
-  implements Activable, PageItemContainer
+  implements PageItemContainer
 {
   private items?: Items;
   private dailyItems: DailyItemsComponent;
@@ -151,10 +156,6 @@ class PageItemComponent
 
   setOnBindDialogListener(listener: OnBindDialogListener) {
     this.onBindDialogListener = listener;
-  }
-
-  getActive() {
-    return this.element.matches('.active');
   }
 }
 

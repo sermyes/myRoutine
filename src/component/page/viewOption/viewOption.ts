@@ -5,18 +5,19 @@ type OnSortedItemsListener = (type: FilterType) => void;
 type OnViewItemConatinerListener = (type: ViewType) => void;
 export type ViewType = 'weekly' | 'daily';
 export type FilterType = 'All' | 'Routine' | 'Todo';
-interface FilterContainer extends Component {
+
+interface FilterImpl extends Component {
   setOnSortedItemsListener(listener: OnSortedItemsListener): void;
 }
 
-export interface ViewContainer extends FilterContainer {
+export interface ViewContainer extends FilterImpl {
   setOnViewItemContainerListener(listener: OnViewItemConatinerListener): void;
   initViewOption(): void;
 }
 
 class FilterMenuComponent
   extends BaseComponent<HTMLElement>
-  implements FilterContainer
+  implements FilterImpl
 {
   private onSortedItemsListener?: OnSortedItemsListener;
   constructor() {

@@ -19,7 +19,4 @@ export class BaseComponent {
     removeFrom(parent) {
         parent.removeChild(this.element);
     }
-    attatch(component, position) {
-        component.attatchTo(this.element, position);
-    }
 }

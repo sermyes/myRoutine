@@ -1,18 +1,18 @@
-import { Component, DayType } from './component/component.js';
-import { DaysComponent, Days } from './component/days/days.js';
-import { PageComponent } from './component/page/page.js';
-import { Dialog } from './dialog/dialog.js';
-import { Items, Presenter } from './presenter.js';
+import { DayType } from './component/component.js';
+import { DaysComponent, DaysContainer } from './component/days/days.js';
+import { PageComponent, PageContainer } from './component/page/page.js';
+import { Dialog, DialogContainer } from './component/dialog/dialog.js';
+import { Items, Presenter, DataItemsContainer } from './presenter.js';
 
 class App {
-  private days: Days & Component;
-  private page: PageComponent;
+  private days: DaysContainer;
+  private page: PageContainer;
   private daysContainer: HTMLElement;
   private pageContainer: HTMLElement;
   private today: number;
-  private presenter: Presenter;
+  private presenter: DataItemsContainer;
   private items: Items;
-  private dialog: Dialog;
+  private dialog: DialogContainer;
   constructor(private appRoot: HTMLElement) {
     this.presenter = new Presenter();
     this.items = this.presenter.getItems();
@@ -58,7 +58,7 @@ class App {
     this.page.updateItems(this.items);
   }
 
-  private bindDaysToPage(page: PageComponent) {
+  private bindDaysToPage(page: PageContainer) {
     const days = document.querySelector('.days')! as HTMLUListElement;
     days.addEventListener('click', (e) => {
       const target = e.target! as HTMLLIElement;

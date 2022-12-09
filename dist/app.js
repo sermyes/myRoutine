@@ -1,6 +1,6 @@
 import { DaysComponent } from './component/days/days.js';
 import { PageComponent } from './component/page/page.js';
-import { Dialog } from './dialog/dialog.js';
+import { Dialog } from './component/dialog/dialog.js';
 import { Presenter } from './presenter.js';
 class App {
     constructor(appRoot) {

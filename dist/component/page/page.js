@@ -95,9 +95,6 @@ class PageItemComponent extends BaseComponent {
     setOnBindDialogListener(listener) {
         this.onBindDialogListener = listener;
     }
-    getActive() {
-        return this.element.matches('.active');
-    }
 }
 export class PageComponent extends BaseComponent {
     constructor(activedDay) {
