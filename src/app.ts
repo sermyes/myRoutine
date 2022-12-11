@@ -29,30 +29,14 @@ class App {
             Sat: 'cancel',
             Sun: 'cancel'
           }
-        },
-        1: {
-          id: 1,
-          time: '04:00',
-          title: 'test1',
-          state: {
-            Mon: 'cancel',
-            Tue: 'cancel',
-            Wed: 'cancel',
-            Thu: 'cancel',
-            Fri: 'cancel',
-            Sat: 'cancel',
-            Sun: 'cancel'
-          }
         }
       },
       Todo: {
         Mon: {
-          3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
-          4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' }
+          3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' }
         },
         Tue: {
-          5: { id: 5, time: '08:00', title: 'test3', state: 'cancel' },
-          6: { id: 6, time: '05:00', title: 'test4', state: 'cancel' }
+          5: { id: 5, time: '08:00', title: 'test3', state: 'cancel' }
         },
         Wed: {
           7: { id: 7, time: '05:00', title: 'test4', state: 'cancel' }
