@@ -37,6 +37,9 @@ class FilterMenuComponent
 
     this.element.addEventListener('click', (e) => {
       const target = e.target! as HTMLElement;
+      if (target.matches('.filterMenu')) {
+        return;
+      }
       this.onSortedItemsListener &&
         this.onSortedItemsListener(target.innerText! as FilterType);
     });

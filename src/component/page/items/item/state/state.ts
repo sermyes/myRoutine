@@ -1,4 +1,4 @@
-import { StateType } from '../../../../../presenter.js';
+import { StateType } from '../../../../../presenter/presenter.js';
 import { BaseComponent } from '../../../../component.js';
 import { Component } from '../../../../component.js';
 import { Modal } from './../../../../modal/modal.js';

@@ -13,7 +13,7 @@ import {
   StateType,
   RoutineMetaData,
   TodoMetaData
-} from '../../presenter.js';
+} from '../../presenter/presenter.js';
 
 type ChangeListener = DayType;
 type OnRemoveItemListener = (id: string, type: DataType, day: DayType) => void;

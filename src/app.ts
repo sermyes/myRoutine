@@ -2,7 +2,7 @@ import { DayType } from './component/component.js';
 import { DaysComponent, DaysContainer } from './component/days/days.js';
 import { PageComponent, PageContainer } from './component/page/page.js';
 import { Dialog, DialogContainer } from './component/dialog/dialog.js';
-import { Items, Presenter, DataItemsContainer } from './presenter.js';
+import { Items, Presenter, DataItemsContainer } from './presenter/presenter.js';
 
 class App {
   private days: DaysContainer;
@@ -14,7 +14,63 @@ class App {
   private items: Items;
   private dialog: DialogContainer;
   constructor(private appRoot: HTMLElement) {
-    this.presenter = new Presenter();
+    this.presenter = new Presenter({
+      Routine: {
+        0: {
+          id: 0,
+          time: '14:00',
+          title: 'test0',
+          state: {
+            Mon: 'cancel',
+            Tue: 'cancel',
+            Wed: 'cancel',
+            Thu: 'cancel',
+            Fri: 'cancel',
+            Sat: 'cancel',
+            Sun: 'cancel'
+          }
+        },
+        1: {
+          id: 1,
+          time: '04:00',
+          title: 'test1',
+          state: {
+            Mon: 'cancel',
+            Tue: 'cancel',
+            Wed: 'cancel',
+            Thu: 'cancel',
+            Fri: 'cancel',
+            Sat: 'cancel',
+            Sun: 'cancel'
+          }
+        }
+      },
+      Todo: {
+        Mon: {
+          3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
+          4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' }
+        },
+        Tue: {
+          5: { id: 5, time: '08:00', title: 'test3', state: 'cancel' },
+          6: { id: 6, time: '05:00', title: 'test4', state: 'cancel' }
+        },
+        Wed: {
+          7: { id: 7, time: '05:00', title: 'test4', state: 'cancel' }
+        },
+        Thu: {
+          8: { id: 8, time: '05:00', title: 'test4', state: 'cancel' }
+        },
+        Fri: {
+          9: { id: 9, time: '05:00', title: 'test4', state: 'cancel' }
+        },
+        Sat: {
+          10: { id: 10, time: '05:00', title: 'test4', state: 'cancel' }
+        },
+        Sun: {
+          11: { id: 11, time: '05:00', title: 'test8', state: 'cancel' }
+        }
+      }
+    });
     this.items = this.presenter.getItems();
     this.today = new Date().getDay();
     this.days = new DaysComponent(this.today);

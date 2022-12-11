@@ -1,4 +1,4 @@
-import { DataType } from '../../../presenter.js';
+import { DataType } from '../../../presenter/presenter.js';
 import { BaseComponent, DayType } from '../../component.js';
 import { Modal } from './../../modal/modal.js';
 

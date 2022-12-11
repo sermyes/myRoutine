@@ -3,7 +3,7 @@ import {
   RoutineMetaData,
   StateType,
   TodoMetaData
-} from '../../../presenter.js';
+} from '../../../presenter/presenter.js';
 import { DayType, Component } from '../../component.js';
 import { FilterType, ViewType } from '../viewOption/viewOption.js';
 

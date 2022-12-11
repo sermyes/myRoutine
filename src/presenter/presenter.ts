@@ -1,4 +1,4 @@
-import { DayType } from './component/component.js';
+import { DayType } from '../component/component.js';
 
 export type DataType = 'Routine' | 'Todo';
 type MetaData = {
@@ -34,70 +34,13 @@ export interface DataItemsContainer {
 
 export class Presenter implements DataItemsContainer {
   private items: Items;
-  constructor() {
-    this.items = {
+  constructor(
+    private initData: Items = {
       Routine: {},
       Todo: { Mon: {}, Tue: {}, Wed: {}, Thu: {}, Fri: {}, Sat: {}, Sun: {} }
-    };
-
-    // test data
-    this.items = {
-      Routine: {
-        0: {
-          id: 0,
-          time: '14:00',
-          title: 'test0',
-          state: {
-            Mon: 'cancel',
-            Tue: 'cancel',
-            Wed: 'cancel',
-            Thu: 'cancel',
-            Fri: 'cancel',
-            Sat: 'cancel',
-            Sun: 'cancel'
-          }
-        },
-        1: {
-          id: 1,
-          time: '04:00',
-          title: 'test1',
-          state: {
-            Mon: 'cancel',
-            Tue: 'cancel',
-            Wed: 'cancel',
-            Thu: 'cancel',
-            Fri: 'cancel',
-            Sat: 'cancel',
-            Sun: 'cancel'
-          }
-        }
-      },
-      Todo: {
-        Mon: {
-          3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
-          4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' }
-        },
-        Tue: {
-          5: { id: 5, time: '08:00', title: 'test3', state: 'cancel' },
-          6: { id: 6, time: '05:00', title: 'test4', state: 'cancel' }
-        },
-        Wed: {
-          7: { id: 7, time: '05:00', title: 'test4', state: 'cancel' }
-        },
-        Thu: {
-          8: { id: 8, time: '05:00', title: 'test4', state: 'cancel' }
-        },
-        Fri: {
-          9: { id: 9, time: '05:00', title: 'test4', state: 'cancel' }
-        },
-        Sat: {
-          10: { id: 10, time: '05:00', title: 'test4', state: 'cancel' }
-        },
-        Sun: {
-          11: { id: 11, time: '05:00', title: 'test4', state: 'cancel' }
-        }
-      }
-    };
+    }
+  ) {
+    this.items = this.initData;
   }
 
   addItem(type: string, time: string, title: string, day: DayType): Items {
