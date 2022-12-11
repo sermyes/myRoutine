@@ -41,17 +41,13 @@ class App {
         Wed: {
           7: { id: 7, time: '05:00', title: 'test6', state: 'cancel' }
         },
-        Thu: {
-          8: { id: 8, time: '05:00', title: 'test7', state: 'cancel' }
-        },
+        Thu: {},
         Fri: {
           9: { id: 9, time: '05:00', title: 'test8', state: 'cancel' }
         },
-        Sat: {
-          10: { id: 10, time: '05:00', title: 'test9', state: 'cancel' }
-        },
+        Sat: {},
         Sun: {
-          11: { id: 11, time: '05:00', title: 'test10', state: 'cancel' }
+          11: { id: 11, time: '05:00', title: 'test8', state: 'cancel' }
         }
       }
     });
