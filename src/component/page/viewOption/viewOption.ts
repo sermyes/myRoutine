@@ -103,6 +103,10 @@ export class ViewOptionComponent
     optionBtn.addEventListener('click', (e) => {
       const target = e.target! as HTMLElement;
       let type: ViewType;
+      if (target.matches('.overlay')) {
+        return;
+      }
+
       if (target.matches('.weeklyBtn')) {
         type = 'weekly';
         overlay.classList.add('right');

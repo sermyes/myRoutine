@@ -605,12 +605,12 @@ body {
   cursor: pointer;
 }
 
-.addMenu li:first-child {
-  margin-right: 1.5rem;
-}
-
 .addMenu li * {
   pointer-events: none;
+}
+
+.addTodo {
+  margin-left: 0.5em;
 }
 
 .addText {

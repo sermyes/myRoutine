@@ -4,13 +4,13 @@ export class AddItemMenuComponent extends BaseComponent {
     constructor(day) {
         super(`
       <ul class="addMenu">
-        <li class="addRoutine">
+        <li class="addRoutine menuItem">
           <span class="addText">Routine</span>
           <button class="add">
             <i class="fas fa-plus addIcon"></i>
           </button>
         </li>
-        <li class="addTodo">
+        <li class="addTodo menuItem">
           <span class="addText">Todo</span>
           <button class="add">
             <i class="fas fa-check"></i>
@@ -21,7 +21,11 @@ export class AddItemMenuComponent extends BaseComponent {
         this.day = day;
         this.element.dataset.day = this.day;
         this.element.addEventListener('click', (e) => {
-            const textElement = e.target.querySelector('.addText');
+            const target = e.target;
+            const textElement = target.querySelector('.addText');
+            if (!target.matches('.menuItem')) {
+                return;
+            }
             this.removeItemMenuListener && this.removeItemMenuListener();
             this.onBindDialogListener &&
                 this.onBindDialogListener(textElement.innerText);

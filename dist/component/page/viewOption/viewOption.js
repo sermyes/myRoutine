@@ -65,6 +65,9 @@ export class ViewOptionComponent extends BaseComponent {
         optionBtn.addEventListener('click', (e) => {
             const target = e.target;
             let type;
+            if (target.matches('.overlay')) {
+                return;
+            }
             if (target.matches('.weeklyBtn')) {
                 type = 'weekly';
                 overlay.classList.add('right');

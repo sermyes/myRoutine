@@ -22,13 +22,13 @@ export class AddItemMenuComponent
   constructor(private day: DayType) {
     super(`
       <ul class="addMenu">
-        <li class="addRoutine">
+        <li class="addRoutine menuItem">
           <span class="addText">Routine</span>
           <button class="add">
             <i class="fas fa-plus addIcon"></i>
           </button>
         </li>
-        <li class="addTodo">
+        <li class="addTodo menuItem">
           <span class="addText">Todo</span>
           <button class="add">
             <i class="fas fa-check"></i>
@@ -39,9 +39,11 @@ export class AddItemMenuComponent
 
     this.element.dataset.day = this.day;
     this.element.addEventListener('click', (e) => {
-      const textElement = (e.target! as HTMLElement).querySelector(
-        '.addText'
-      )! as HTMLSpanElement;
+      const target = e.target! as HTMLElement;
+      const textElement = target.querySelector('.addText')! as HTMLSpanElement;
+      if (!target.matches('.menuItem')) {
+        return;
+      }
       this.removeItemMenuListener && this.removeItemMenuListener();
       this.onBindDialogListener &&
         this.onBindDialogListener(textElement.innerText! as DataType);

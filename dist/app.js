@@ -25,45 +25,29 @@ class App {
                         Sat: 'cancel',
                         Sun: 'cancel'
                     }
-                },
-                1: {
-                    id: 1,
-                    time: '04:00',
-                    title: 'test1',
-                    state: {
-                        Mon: 'cancel',
-                        Tue: 'cancel',
-                        Wed: 'cancel',
-                        Thu: 'cancel',
-                        Fri: 'cancel',
-                        Sat: 'cancel',
-                        Sun: 'cancel'
-                    }
                 }
             },
             Todo: {
                 Mon: {
-                    3: { id: 3, time: '08:00', title: 'test3', state: 'cancel' },
-                    4: { id: 4, time: '05:00', title: 'test4', state: 'cancel' }
+                    3: { id: 3, time: '08:00', title: 'test4', state: 'cancel' }
                 },
                 Tue: {
-                    5: { id: 5, time: '08:00', title: 'test3', state: 'cancel' },
-                    6: { id: 6, time: '05:00', title: 'test4', state: 'cancel' }
+                    5: { id: 5, time: '08:00', title: 'test5', state: 'cancel' }
                 },
                 Wed: {
-                    7: { id: 7, time: '05:00', title: 'test4', state: 'cancel' }
+                    7: { id: 7, time: '05:00', title: 'test6', state: 'cancel' }
                 },
                 Thu: {
-                    8: { id: 8, time: '05:00', title: 'test4', state: 'cancel' }
+                    8: { id: 8, time: '05:00', title: 'test7', state: 'cancel' }
                 },
                 Fri: {
-                    9: { id: 9, time: '05:00', title: 'test4', state: 'cancel' }
+                    9: { id: 9, time: '05:00', title: 'test8', state: 'cancel' }
                 },
                 Sat: {
-                    10: { id: 10, time: '05:00', title: 'test4', state: 'cancel' }
+                    10: { id: 10, time: '05:00', title: 'test9', state: 'cancel' }
                 },
                 Sun: {
-                    11: { id: 11, time: '05:00', title: 'test8', state: 'cancel' }
+                    11: { id: 11, time: '05:00', title: 'test10', state: 'cancel' }
                 }
             }
         });
@@ -102,6 +86,9 @@ class App {
         const days = document.querySelector('.days');
         days.addEventListener('click', (e) => {
             const target = e.target;
+            if (target.dataset.day === undefined) {
+                return;
+            }
             page.setOnActiveChangeListener(target.dataset.day);
         });
     }
